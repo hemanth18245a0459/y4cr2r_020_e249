@@ -81,71 +81,6 @@ sap.ui.define([
                         "txtAssignmentNumber": "ASG1005",
                         "txtItemText": "Item description 5",
                         "txtProfitCenter": "PC500"
-                    },
-                    {
-                        "txtCompanyCode": "6000",
-                        "txtAmountDocCurr": "6500.00",
-                        "txtAmountLocCurr": "6400.00",
-                        "txtGlAccount": "400006",
-                        "txtVendorPos": "VP1006",
-                        "txtCustomerPos": "CP2006",
-                        "txtCostCenter": "CC600",
-                        "txtOrderNumber": "ORD1006",
-                        "txtAssignmentNumber": "ASG1006",
-                        "txtItemText": "Item description 6",
-                        "txtProfitCenter": "PC600"
-                    },
-                    {
-                        "txtCompanyCode": "7000",
-                        "txtAmountDocCurr": "7500.50",
-                        "txtAmountLocCurr": "7400.50",
-                        "txtGlAccount": "400007",
-                        "txtVendorPos": "VP1007",
-                        "txtCustomerPos": "CP2007",
-                        "txtCostCenter": "CC700",
-                        "txtOrderNumber": "ORD1007",
-                        "txtAssignmentNumber": "ASG1007",
-                        "txtItemText": "Item description 7",
-                        "txtProfitCenter": "PC700"
-                    },
-                    {
-                        "txtCompanyCode": "8000",
-                        "txtAmountDocCurr": "8500.00",
-                        "txtAmountLocCurr": "8400.00",
-                        "txtGlAccount": "400008",
-                        "txtVendorPos": "VP1008",
-                        "txtCustomerPos": "CP2008",
-                        "txtCostCenter": "CC800",
-                        "txtOrderNumber": "ORD1008",
-                        "txtAssignmentNumber": "ASG1008",
-                        "txtItemText": "Item description 8",
-                        "txtProfitCenter": "PC800"
-                    },
-                    {
-                        "txtCompanyCode": "9000",
-                        "txtAmountDocCurr": "9500.25",
-                        "txtAmountLocCurr": "9400.25",
-                        "txtGlAccount": "400009",
-                        "txtVendorPos": "VP1009",
-                        "txtCustomerPos": "CP2009",
-                        "txtCostCenter": "CC900",
-                        "txtOrderNumber": "ORD1009",
-                        "txtAssignmentNumber": "ASG1009",
-                        "txtItemText": "Item description 9",
-                        "txtProfitCenter": "PC900"
-                    },
-                    {
-                        "txtCompanyCode": "10000",
-                        "txtAmountDocCurr": "10500.00",
-                        "txtAmountLocCurr": "10400.00",
-                        "txtGlAccount": "400010",
-                        "txtVendorPos": "VP1010",
-                        "txtCustomerPos": "CP2010",
-                        "txtCostCenter": "CC1000",
-                        "txtOrderNumber": "ORD1010",
-                        "txtAssignmentNumber": "ASG1010",
-                        "txtItemText": "Item description 10",
-                        "txtProfitCenter": "PC1000"
                     }
                 ],
                 notifications: [],
@@ -224,6 +159,67 @@ sap.ui.define([
                 // Valid format
                 oInput.setValueState("None");
             }
+        },
+
+        onAdd: function () {
+            var oModel = this.getView().getModel();
+            var aItems = oModel.getProperty("/items");
+    
+            if (aItems.length > 0) {
+                var oLastRow = aItems[aItems.length - 1];
+                
+                if (!oLastRow.txtCompanyCode || !oLastRow.txtAmountDocCurr) {
+                    sap.m.MessageToast.show("Please fill all mandatory fields before adding a new row.");
+                    return;
+                }
+            }
+            
+            aItems.push({
+                txtCompanyCode: "",
+                txtAmountDocCurr: "",
+                txtAmountLocCurr: "",
+                txtGlAccount: "",
+                txtVendorPos: "",
+                txtCustomerPos: "",
+                txtCostCenter: "",
+                txtOrderNumber: "",
+                txtAssignmentNumber: "",
+                txtItemText: "",
+                txtProfitCenter: ""
+            });
+            oModel.setProperty("/items", aItems);
+        },
+
+        onDelete: function () {
+            // Get the table control by its ID.
+            var oTable = this.byId("accountTable");
+            
+            // Retrieve the array of selected indices.
+            var aSelectedIndices = oTable.getSelectedIndices();
+            if (aSelectedIndices.length === 0) {
+                sap.m.MessageToast.show("Please select at least one row to delete.");
+                return;
+            }
+            
+            // Get the model and the current items array.
+            var oModel = this.getView().getModel();
+            var aItems = oModel.getProperty("/items");
+            
+            // Sort the indices in descending order to avoid re-indexing issues.
+            aSelectedIndices.sort(function(a, b) { return b - a; });
+            
+            // Loop over the sorted indices and remove the corresponding items.
+            aSelectedIndices.forEach(function(iIndex) {
+                aItems.splice(iIndex, 1);
+            });
+            
+            // Update the model with the new items array.
+            oModel.setProperty("/items", aItems);
+            
+            // Clear the table's selection to update the UI.
+            oTable.clearSelection();
+            
+            sap.m.MessageToast.show("Selected row(s) deleted.");
         },
 
 

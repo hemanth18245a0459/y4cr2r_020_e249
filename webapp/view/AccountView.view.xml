@@ -73,77 +73,77 @@
 					<t:Column id="colCompanyCode" width="8rem">
 						<Label id="lblCompanyCode" required="true" text="Comp.Code" />
 						<t:template>
-							<Text id="txtCompanyCode" text="{txtCompanyCode}" wrapping="false" />
+							<Input id="txtCompanyCode" value="{txtCompanyCode}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 2: Ammount Doc.Curr. -->
 					<t:Column id="colAmountDocCurr" width="10rem">
 						<Label id="lblAmountDocCurr" required="true" text="Amount Doc.Curr." />
 						<t:template>
-							<Text id="txtAmountDocCurr" text="{txtAmountDocCurr}" wrapping="false" />
+							<Input id="txtAmountDocCurr" value="{txtAmountDocCurr}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 3: Ammount Loc.Curr. -->
 					<t:Column id="colAmountLocCurr" width="9rem">
 						<Label id="lblAmountLocCurr" text="Amount Loc.Curr." />
 						<t:template>
-							<Text id="txtAmountLocCurr" text="{txtAmountLocCurr}" wrapping="false" />
+							<Input id="txtAmountLocCurr" value="{txtAmountLocCurr}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 4: G/L account -->
 					<t:Column id="colGlAccount" width="8rem">
 						<Label id="lblGlAccount" text="G/L account" />
 						<t:template>
-							<Text id="txtGlAccount" text="{txtGlAccount}" wrapping="false" />
+							<Input id="txtGlAccount" value="{txtGlAccount}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 5: Vendor pos. -->
 					<t:Column id="colVendorPos" width="8rem">
 						<Label id="lblVendorPos" text="Vendor pos." />
 						<t:template>
-							<Text id="txtVendorPos" text="{txtVendorPos}" wrapping="false" />
+							<Input id="txtVendorPos" value="{txtVendorPos}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 6: Customer pos. -->
 					<t:Column id="colCustomerPos" width="8rem">
 						<Label id="lblCustomerPos" text="Customer pos." />
 						<t:template>
-							<Text id="txtCustomerPos" text="{txtCustomerPos}" wrapping="false" />
+							<Input id="txtCustomerPos" value="{txtCustomerPos}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 7: Cost Center -->
 					<t:Column id="colCostCenter" width="8rem">
 						<Label id="lblCostCenter" text="Cost Center" />
 						<t:template>
-							<Text id="txtCostCenter" text="{txtCostCenter}" wrapping="false" />
+							<Input id="txtCostCenter" value="{txtCostCenter}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 8: Order Number -->
 					<t:Column id="colOrderNumber" width="8rem">
 						<Label id="lblOrderNumber" text="Order Number" />
 						<t:template>
-							<Text id="txtOrderNumber" text="{txtOrderNumber}" wrapping="false" />
+							<Input id="txtOrderNumber" value="{txtOrderNumber}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 9: Assignment Number -->
 					<t:Column id="colAssignmentNumber" width="11rem">
 						<Label id="lblAssignmentNumber" text="Assignment Number" />
 						<t:template>
-							<Text id="txtAssignmentNumber" text="{txtAssignmentNumber}" wrapping="false" />
+							<Input id="txtAssignmentNumber" value="{txtAssignmentNumber}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 10: Item Text -->
 					<t:Column id="colItemText" width="9rem">
 						<Label id="lblItemText" text="Item Text" />
 						<t:template>
-							<Text id="txtItemText" text="{txtItemText}" wrapping="false" />
+							<Input id="txtItemText" value="{txtItemText}"  />
 						</t:template>
 					</t:Column>
 					<!-- Column 11: Profit Center -->
 					<t:Column id="colProfitCenter" width="9rem">
 						<Label id="lblProfitCenter" text="Profit Center" />
 						<t:template>
-							<Text id="txtProfitCenter" text="{txtProfitCenter}" wrapping="false" />
+							<Input id="txtProfitCenter" value="{txtProfitCenter}"  />
 						</t:template>
 					</t:Column>
 				</t:columns>

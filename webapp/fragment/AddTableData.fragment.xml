@@ -1,0 +1,42 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+    <Dialog id="dlgAddNewData" title="Add New Data" contentWidth="700px">
+        <content>
+            <VBox id="vboxAddNewRecord" class="sapUiSmallMargin">
+                <f:SimpleForm id="sfAddNewRecord" editable="true" layout="ResponsiveGridLayout" title="Enter the Below Details to Add a New Record" labelSpanXL="3" labelSpanL="3" labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1" columnsL="1" columnsM="1" singleContainerFullSize="false">
+                    <f:content>
+                        <Label id="flblCompCode" text="Comp.Code" />
+                        <Input id="finpCompCode" value="" />
+                        <Label id="flblAmountDocCurr" text="Amount Doc.Curr." />
+                        <Input id="finpAmountDocCurr" value="" />
+                        <Label id="flblAmountLocCurr" text="Amount Loc.Curr." />
+                        <Input id="finpAmountLocCurr" value="" />
+                        <Label id="flblGLAccount" text="G/L Account" />
+                        <Input id="finpGLAccount" value="" />
+                        <Label id="flblVendorPos" text="Vendor Pos." />
+                        <Input id="finpVendorPos" value="" />
+                        <Label id="flblCustomerPos" text="Customer Pos." />
+                        <Input id="finpCustomerPos" value="" />
+                        <Label id="flblCostCenter" text="Cost Center" />
+                        <Input id="finpCostCenter" value="" />
+                        <Label id="flblOrderNumber" text="Order Number" />
+                        <Input id="finpOrderNumber" value="" />
+                        <Label id="flblAssignmentNumber" text="Assignment Number" />
+                        <Input id="finpAssignmentNumber" value="" />
+                        <Label id="flblItemText" text="Item Text" />
+                        <Input id="finpItemText" value="" />
+                        <Label id="flblProfitCenter" text="Profit Center" />
+                        <Input id="finpProfitCenter" value="" />
+                    </f:content>
+                </f:SimpleForm>
+            </VBox>
+        </content>
+        <buttons>
+            <Button id="btnSaveRecord" text="Save Record" press="onSaveNewRecord" />
+            <Button id="btnCancel" text="Cancel" press="onCancelNewRecord" />
+        </buttons>
+    </Dialog>
+</core:FragmentDefinition>
