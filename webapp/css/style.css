@@ -1,0 +1,28 @@
+/* Enter your custom styles here */
+.customForm {
+    margin: 0;
+    padding: 0;
+}
+.customBorder {
+    border: 2px solid #ccc; 
+    border-radius: 10px;
+}
+
+.noTitles .sapUiFormTitle.sapUiFormTitleH5 {
+    display: none !important;
+}
+.noTitles .sapUiFormTitleRow {
+    display: none !important;
+}
+
+.noTopPadding .sapUiFormElementLbl:first-child,
+.noTopPadding .sapUiRespGridSpan12:first-child {
+    padding-top: 0 !important;
+}
+
+
+:root {
+    --sapButton_Success_Background: rgba(4, 167, 4, 0.59);
+    --sapButton_Emphasized_Background: rgba(37, 73, 231, 0.751);
+    --sapButton_Attention_Background: rgba(255, 197, 90, 0.189);
+}
