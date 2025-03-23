@@ -1,0 +1,58 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <TableSelectDialog id="compCodeDialog" noDataText="No Products Found" title="Select Company" search=".handleSearch" confirm=".handleClose" cancel=".handleClose" contentWidth="500px" contentHeight="400px" items="{path : 'oTableModel>/aCompanyCode'}">
+
+        <columns>
+            <Column id="compCodecolCustomerID" minScreenWidth="Tablet" demandPopin="true">
+                <Text id="compCodelblCustomerID" text="Company Code" />
+            </Column>
+            <Column id="compCodecolCompanyName" minScreenWidth="Desktop" demandPopin="true">
+                <Text id="compCodelblCompanyName" text="Company Name" />
+            </Column>
+            <!-- <Column id="compCodecolContactName" hAlign="End">
+                <Text id="compCodelblContactName" text="Contact Name" />
+            </Column>
+            <Column id="compCodecolContactTitle" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblContactTitle" text="Contact Title" />
+            </Column>
+            <Column id="compCodecolAddress" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblAddress" text="Address" />
+            </Column>
+            <Column id="compCodecolCity" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblCity" text="City" />
+            </Column>
+            <Column id="compCodecolRegion" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblRegion" text="Region" />
+            </Column>
+            <Column id="compCodecolPostalCode" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblPostalCode" text="Postal Code" />
+            </Column>
+            <Column id="compCodecolCountry" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblCountry" text="Country" />
+            </Column>
+            <Column id="compCodecolPhone" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblPhone" text="Phone" />
+            </Column>
+            <Column id="compCodecolFax" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                <Text id="compCodelblFax" text="Fax" />
+            </Column> -->
+        </columns>
+        <items>
+            <ColumnListItem id="compCodecliCustomerItem" vAlign="Middle" press="onListItemPress" type="Navigation">
+                <cells>
+                    <Text id="compCodetxtCustomerID" text="{oTableModel>CustomerID}" />
+                    <Text id="compCodetxtCompanyName" text="{oTableModel>CompanyName}" />
+                    <!-- <Text id="compCodetxtContactName" text="{oTableModel>ContactName}" />
+                    <Text id="compCodetxtContactTitle" text="{oTableModel>ContactTitle}" />
+                    <Text id="compCodetxtAddress" text="{oTableModel>Address}" />
+                    <Text id="compCodetxtCity" text="{oTableModel>City}" />
+                    <Text id="compCodetxtRegion" text="{oTableModel>Region}" />
+                    <Text id="compCodetxtPostalCode" text="{oTableModel>PostalCode}" />
+                    <Text id="compCodetxtCountry" text="{oTableModel>Country}" />
+                    <Text id="compCodetxtPhone" text="{oTableModel>Phone}" />
+                    <Text id="compCodetxtFax" text="{oTableModel>Fax}" /> -->
+                </cells>
+            </ColumnListItem>
+        </items>
+    </TableSelectDialog>
+</core:FragmentDefinition>

@@ -1,0 +1,224 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:tnt="sap.tnt"
+    xmlns:l="sap.ui.layout"
+    xmlns:f="sap.ui.layout.form"
+    xmlns:core="sap.ui.core">
+    <Dialog id="dlgCustomerData" contentWidth="90%" contentHeight="80%" showHeader="true">
+        <customHeader>
+            <Bar>
+                <!-- <contentLeft>
+                    <ToolbarSpacer />
+                </contentLeft> -->
+                <contentMiddle>
+                    <ToolbarSpacer />
+                    <Title text="Data View"/>
+                    <ToolbarSpacer />
+                </contentMiddle>
+                <contentRight>
+                    <Button icon="sap-icon://decline" type="Reject" press="onCloseDialog"/>
+                </contentRight>
+            </Bar>
+        </customHeader>
+        <content>
+            <VBox id="tableContainer">
+                <OverflowToolbar id="View1HeaderToolbar">
+                    <ToolbarSpacer />
+                    <Button id="btnCustomers" type="Ghost" text="Customers" press="onCustomersPress" class="sapUiLargeMarginBeginEnd" />
+                    <Button id="btnEmployees" type="Ghost" text="Employees" press="onEmployeesPress" class="sapUiLargeMarginBeginEnd" />
+                    <Button id="btnSuppliers" type="Ghost" text="Suppliers" press="onSuppliersPress" class="sapUiLargeMarginBeginEnd" />
+                    <ToolbarSpacer />
+                </OverflowToolbar>
+
+                <!-- Customers Table - Initially Hidden -->
+                <Table id="tblCustomers" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 'c' }" items="{oTableModel>/Customers}">
+                    <columns>
+                        <Column id="colCustomerID" minScreenWidth="Tablet" demandPopin="true">
+                            <Text id="lblCustomerID" text="Customer ID" />
+                        </Column>
+                        <Column id="colCompanyName" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblCompanyName" text="Company Name" />
+                        </Column>
+                        <Column id="colContactName" hAlign="End">
+                            <Text id="lblContactName" text="Contact Name" />
+                        </Column>
+                        <Column id="colContactTitle" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblContactTitle" text="Contact Title" />
+                        </Column>
+                        <Column id="colAddress" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblAddress" text="Address" />
+                        </Column>
+                        <Column id="colCity" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblCity" text="City" />
+                        </Column>
+                        <Column id="colRegion" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblRegion" text="Region" />
+                        </Column>
+                        <Column id="colPostalCode" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblPostalCode" text="Postal Code" />
+                        </Column>
+                        <Column id="colCountry" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblCountry" text="Country" />
+                        </Column>
+                        <Column id="colPhone" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblPhone" text="Phone" />
+                        </Column>
+                        <Column id="colFax" minScreenWidth="Desktop" demandPopin="true" hAlign="Center">
+                            <Text id="lblFax" text="Fax" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem id="cliCustomerItem" vAlign="Middle" press="onListItemPress" type="Navigation">
+                            <cells>
+                                <Text id="txtCustomerID" text="{oTableModel>CustomerID}" />
+                                <Text id="txtCompanyName" text="{oTableModel>CompanyName}" />
+                                <Text id="txtContactName" text="{oTableModel>ContactName}" />
+                                <Text id="txtContactTitle" text="{oTableModel>ContactTitle}" />
+                                <Text id="txtAddress" text="{oTableModel>Address}" />
+                                <Text id="txtCity" text="{oTableModel>City}" />
+                                <Text id="txtRegion" text="{oTableModel>Region}" />
+                                <Text id="txtPostalCode" text="{oTableModel>PostalCode}" />
+                                <Text id="txtCountry" text="{oTableModel>Country}" />
+                                <Text id="txtPhone" text="{oTableModel>Phone}" />
+                                <Text id="txtFax" text="{oTableModel>Fax}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- Employees Table - Initially Hidden -->
+                <Table id="tblEmployees" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 'e' }" items="{oTableModel>/Employees}">
+                    <columns>
+                        <Column id="colEmployeeID" minScreenWidth="Tablet" demandPopin="true">
+                            <Text id="lblEmployeeID" text="Employee ID" />
+                        </Column>
+                        <Column id="colLastName" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblLastName" text="Last Name" />
+                        </Column>
+                        <Column id="colFirstName" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblFirstName" text="First Name" />
+                        </Column>
+                        <Column id="colTitle" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblTitle" text="Title" />
+                        </Column>
+                        <Column id="colTitleOfCourtesy" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblTitleOfCourtesy" text="Title Of Courtesy" />
+                        </Column>
+                        <Column id="colBirthDate" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblBirthDate" text="Birth Date" />
+                        </Column>
+                        <Column id="colHireDate" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblHireDate" text="Hire Date" />
+                        </Column>
+                        <Column id="colEmpAddress" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblEmpAddress" text="Address" />
+                        </Column>
+                        <Column id="colEmpCity" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblEmpCity" text="City" />
+                        </Column>
+                        <Column id="colEmpRegion" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblEmpRegion" text="Region" />
+                        </Column>
+                        <Column id="colEmpPostalCode" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblEmpPostalCode" text="Postal Code" />
+                        </Column>
+                        <Column id="colEmpCountry" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblEmpCountry" text="Country" />
+                        </Column>
+                        <Column id="colHomePhone" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblHomePhone" text="Home Phone" />
+                        </Column>
+                        <Column id="colExtension" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblExtension" text="Extension" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem id="cliEmployeeItem" vAlign="Middle" press="onListItemPress" type="Navigation">
+                            <cells>
+                                <Text id="txtEmployeeID" text="{oTableModel>EmployeeID}" />
+                                <Text id="txtLastName" text="{oTableModel>LastName}" />
+                                <Text id="txtFirstName" text="{oTableModel>FirstName}" />
+                                <Text id="txtTitle" text="{oTableModel>Title}" />
+                                <Text id="txtTitleOfCourtesy" text="{oTableModel>TitleOfCourtesy}" />
+                                <Text id="txtBirthDate" text="{oTableModel>BirthDate}" />
+                                <Text id="txtHireDate" text="{oTableModel>HireDate}" />
+                                <Text id="txtEmpAddress" text="{oTableModel>Address}" />
+                                <Text id="txtEmpCity" text="{oTableModel>City}" />
+                                <Text id="txtEmpRegion" text="{oTableModel>Region}" />
+                                <Text id="txtEmpPostalCode" text="{oTableModel>PostalCode}" />
+                                <Text id="txtEmpCountry" text="{oTableModel>Country}" />
+                                <Text id="txtHomePhone" text="{oTableModel>HomePhone}" />
+                                <Text id="txtExtension" text="{oTableModel>Extension}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+
+                <!-- Suppliers Table - Initially Hidden -->
+                <Table id="tblSuppliers" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 's' }" items="{oTableModel>/Suppliers}">
+                    <columns>
+                        <Column id="colSupplierID" minScreenWidth="Tablet" demandPopin="true">
+                            <Text id="lblSupplierID" text="Supplier ID" />
+                        </Column>
+                        <Column id="colSupCompanyName" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupCompanyName" text="Company Name" />
+                        </Column>
+                        <Column id="colSupContactName" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupContactName" text="Contact Name" />
+                        </Column>
+                        <Column id="colSupContactTitle" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupContactTitle" text="Contact Title" />
+                        </Column>
+                        <Column id="colSupAddress" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupAddress" text="Address" />
+                        </Column>
+                        <Column id="colSupCity" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupCity" text="City" />
+                        </Column>
+                        <Column id="colSupRegion" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupRegion" text="Region" />
+                        </Column>
+                        <Column id="colSupPostalCode" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupPostalCode" text="Postal Code" />
+                        </Column>
+                        <Column id="colSupCountry" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupCountry" text="Country" />
+                        </Column>
+                        <Column id="colSupPhone" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupPhone" text="Phone" />
+                        </Column>
+                        <Column id="colSupFax" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblSupFax" text="Fax" />
+                        </Column>
+                        <Column id="colHomePage" minScreenWidth="Desktop" demandPopin="true">
+                            <Text id="lblHomePage" text="Home Page" />
+                        </Column>
+                    </columns>
+                    <items>
+                        <ColumnListItem id="cliSupplierItem" vAlign="Middle" press="onListItemPress" type="Navigation">
+                            <cells>
+                                <Text id="txtSupplierID" text="{oTableModel>SupplierID}" />
+                                <Text id="txtSupCompanyName" text="{oTableModel>CompanyName}" />
+                                <Text id="txtSupContactName" text="{oTableModel>ContactName}" />
+                                <Text id="txtSupContactTitle" text="{oTableModel>ContactTitle}" />
+                                <Text id="txtSupAddress" text="{oTableModel>Address}" />
+                                <Text id="txtSupCity" text="{oTableModel>City}" />
+                                <Text id="txtSupRegion" text="{oTableModel>Region}" />
+                                <Text id="txtSupPostalCode" text="{oTableModel>PostalCode}" />
+                                <Text id="txtSupCountry" text="{oTableModel>Country}" />
+                                <Text id="txtSupPhone" text="{oTableModel>Phone}" />
+                                <Text id="txtSupFax" text="{oTableModel>Fax}" />
+                                <Text id="txtHomePage" text="{oTableModel>HomePage}" />
+                            </cells>
+                        </ColumnListItem>
+                    </items>
+                </Table>
+            </VBox>
+        </content>
+        <buttons>
+            <Button id="btnCancelDialog" text="Cancel" press="onCancelShowTableDialog" />
+        </buttons>
+        <endButton>
+            <Button text="Close" press=".onCloseDialog"/>
+        </endButton>
+    </Dialog>
+</core:FragmentDefinition>

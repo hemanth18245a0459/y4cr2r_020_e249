@@ -1,0 +1,18 @@
+<core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <TableSelectDialog id="headerTextDialog" noDataText="No Products Found" title="Select Header Text" search=".HeaderTexthandleSearch" confirm=".HeaderTexthandleClose" cancel=".HeaderTexthandleClose" contentWidth="200px" contentHeight="400px" items="{path : 'oTableModel>/aTerritories'}">
+
+        <columns>
+            <Column id="headerTextcolTerritoryDescription" minScreenWidth="Tablet" demandPopin="true">
+                <Text id="headerTextlblTerritoryDescription" text="Territory Description" />
+            </Column>
+        </columns>
+        <items>
+            <ColumnListItem id="headerTextcliCustomerItem" vAlign="Middle" press="onListItemPress" type="Navigation">
+                <cells>
+                    <Text id="headerTexttxtTerritoryDescription" text="{oTableModel>TerritoryDescription}" />
+                </cells>
+            </ColumnListItem>
+        </items>
+    </TableSelectDialog>
+</core:FragmentDefinition>

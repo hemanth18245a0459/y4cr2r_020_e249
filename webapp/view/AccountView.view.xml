@@ -11,13 +11,13 @@
 
 		<VBox id="accountFormContainer" width="100%">
 			<!-- SimpleForm Section -->
-			<f:SimpleForm id="accountSimpleForm" editable="true" class="noTitles customBorder noTopPadding" layout="ResponsiveGridLayout" adjustLabelSpan="false" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" columnsXL="3" columnsL="3" columnsM="2">
+			<f:SimpleForm id="accountSimpleForm" editable="true" class="noTitles customBorder noTopPadding sapUISizeCompact" layout="ResponsiveGridLayout" adjustLabelSpan="false" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" columnsXL="3" columnsL="3" columnsM="2">
 				<f:content>
 					<!-- First Column -->
 					<core:Title id="sectionGeneralTitle" class="hiddenTitle" />
 
 					<Label id="labelCompanyCode" required="true" text="Company Code" />
-					<Input id="inputCompanyCode" value="" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
+					<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
 
 					<Label id="labelDocumentDate" required="true" text="Document Date" />
 					<!-- <Input id="inputDocumentDate" value="" maxLength="10" placeholder="e.g.31.12.2025" width="100%" showValueHelp="true" valueHelpIconSrc="sap-icon://appointment-2" valueHelpRequest="onDocumentDateValueHelpRequest" change="onDocumentDateChange" /> -->
@@ -39,7 +39,16 @@
 					<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
 
 					<Label id="labelCurrency" required="true" text="Currency" />
-					<Input id="inputCurrency" value="" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
+					<Input id="inputCurrency" 
+						value="{
+							parts: [
+								{path: 'oModel>/amount'},
+								{path: 'oModel>/currencyCode'}
+							],
+							type: 'sap.ui.model.type.Currency'
+							
+						}" 
+	   					showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
 
 					<!-- Third Column -->
 					<core:Title id="sectionAdditionalInfo" class="hiddenTitle" />
@@ -56,8 +65,9 @@
 			<t:Table id="accountTable" class="sapUiSmallMarginTop" rows="{/items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
 				<t:extension>
 					<OverflowToolbar id="tableToolbar">
-						<Title id="tableTitle" text="{= 'Items (' + ${/items}.length + ')' }"  />
+						<Title id="tableTitle" text="{= 'Items (' + ${/items}.length + ')' }" />
 						<ToolbarSpacer />
+						<Button id="btnShowData" type="Ghost" text="Show Data" press="onShowData" />
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
 						<Button id="btnUpload" type="Ghost" icon="sap-icon://upload" text="Upload" press="onUpload" />
 						<Button id="btnSimulation" type="Success" icon="sap-icon://validate" text="Simulation" press="onSimulation" />
@@ -80,70 +90,70 @@
 					<t:Column id="colAmountDocCurr" width="10rem">
 						<Label id="lblAmountDocCurr" required="true" text="Amount Doc.Curr." />
 						<t:template>
-							<Input id="txtAmountDocCurr" value="{txtAmountDocCurr}"  />
+							<Input id="txtAmountDocCurr" value="{txtAmountDocCurr}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 3: Ammount Loc.Curr. -->
 					<t:Column id="colAmountLocCurr" width="9rem">
 						<Label id="lblAmountLocCurr" text="Amount Loc.Curr." />
 						<t:template>
-							<Input id="txtAmountLocCurr" value="{txtAmountLocCurr}"  />
+							<Input id="txtAmountLocCurr" value="{txtAmountLocCurr}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 4: G/L account -->
 					<t:Column id="colGlAccount" width="8rem">
 						<Label id="lblGlAccount" text="G/L account" />
 						<t:template>
-							<Input id="txtGlAccount" value="{txtGlAccount}"  />
+							<Input id="txtGlAccount" value="{txtGlAccount}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 5: Vendor pos. -->
 					<t:Column id="colVendorPos" width="8rem">
 						<Label id="lblVendorPos" text="Vendor pos." />
 						<t:template>
-							<Input id="txtVendorPos" value="{txtVendorPos}"  />
+							<Input id="txtVendorPos" value="{txtVendorPos}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 6: Customer pos. -->
 					<t:Column id="colCustomerPos" width="8rem">
 						<Label id="lblCustomerPos" text="Customer pos." />
 						<t:template>
-							<Input id="txtCustomerPos" value="{txtCustomerPos}"  />
+							<Input id="txtCustomerPos" value="{txtCustomerPos}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 7: Cost Center -->
 					<t:Column id="colCostCenter" width="8rem">
 						<Label id="lblCostCenter" text="Cost Center" />
 						<t:template>
-							<Input id="txtCostCenter" value="{txtCostCenter}"  />
+							<Input id="txtCostCenter" value="{txtCostCenter}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 8: Order Number -->
 					<t:Column id="colOrderNumber" width="8rem">
 						<Label id="lblOrderNumber" text="Order Number" />
 						<t:template>
-							<Input id="txtOrderNumber" value="{txtOrderNumber}"  />
+							<Input id="txtOrderNumber" value="{txtOrderNumber}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 9: Assignment Number -->
 					<t:Column id="colAssignmentNumber" width="11rem">
 						<Label id="lblAssignmentNumber" text="Assignment Number" />
 						<t:template>
-							<Input id="txtAssignmentNumber" value="{txtAssignmentNumber}"  />
+							<Input id="txtAssignmentNumber" value="{txtAssignmentNumber}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 10: Item Text -->
 					<t:Column id="colItemText" width="9rem">
 						<Label id="lblItemText" text="Item Text" />
 						<t:template>
-							<Input id="txtItemText" value="{txtItemText}"  />
+							<Input id="txtItemText" value="{txtItemText}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 11: Profit Center -->
 					<t:Column id="colProfitCenter" width="9rem">
 						<Label id="lblProfitCenter" text="Profit Center" />
 						<t:template>
-							<Input id="txtProfitCenter" value="{txtProfitCenter}"  />
+							<Input id="txtProfitCenter" value="{txtProfitCenter}" />
 						</t:template>
 					</t:Column>
 				</t:columns>
@@ -154,7 +164,9 @@
 		<footer>
 			<OverflowToolbar id="otbFooter">
 				<Button id="btnNotification" type="Emphasized" tooltip="Notifications" text="{= ${/notifications}.length }" icon="sap-icon://message-popup" press="onNotificationPress">
-					<layoutData><OverflowToolbarLayoutData priority="NeverOverflow" /></layoutData>
+					<layoutData>
+						<OverflowToolbarLayoutData priority="NeverOverflow" />
+					</layoutData>
 				</Button>
 			</OverflowToolbar>
 		</footer>
