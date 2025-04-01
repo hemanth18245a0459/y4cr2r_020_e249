@@ -39,16 +39,7 @@
 					<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
 
 					<Label id="labelCurrency" required="true" text="Currency" />
-					<Input id="inputCurrency" 
-						value="{
-							parts: [
-								{path: 'oModel>/amount'},
-								{path: 'oModel>/currencyCode'}
-							],
-							type: 'sap.ui.model.type.Currency'
-							
-						}" 
-	   					showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
+					<Input id="inputCurrency" value="{/selectedCurrency}" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
 
 					<!-- Third Column -->
 					<core:Title id="sectionAdditionalInfo" class="hiddenTitle" />

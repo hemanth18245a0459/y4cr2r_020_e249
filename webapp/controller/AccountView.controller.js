@@ -195,51 +195,78 @@ sap.ui.define([
             }
         },
 
-        onCurrencyValueHelpRequest: function(oEvent) {
-            var aCurrencies = [
-                { code: "USD", name: "US Dollar" },
-                { code: "EUR", name: "Euro" },
-                { code: "GBP", name: "British Pound" },
-                { code: "JPY", name: "Japanese Yen" }
-            ];
+        // onCurrencyValueHelpRequest: function(oEvent) {
+        //     var aCurrencies = [
+        //         { code: "USD", name: "US Dollar" },
+        //         { code: "EUR", name: "Euro" },
+        //         { code: "GBP", name: "British Pound" },
+        //         { code: "JPY", name: "Japanese Yen" }
+        //     ];
             
-            var oCurrencyModel = new sap.ui.model.json.JSONModel({
-                currencies: aCurrencies
-            });
+        //     var oCurrencyModel = new sap.ui.model.json.JSONModel({
+        //         currencies: aCurrencies
+        //     });
             
-            if (!this._oDialog) {
-                this._oDialog = new sap.m.SelectDialog({
-                    title: "Select Currency",
-                    items: {
-                        path: "/currencies",
-                        template: new sap.m.StandardListItem({
-                            title: "{code}",
-                            description: "{name}"
-                        })
-                    },
-                    search: function(oEvent) {
-                        var sValue = oEvent.getParameter("value");
-                        var oFilter = new sap.ui.model.Filter(
-                            "code",
-                            sap.ui.model.FilterOperator.Contains,
-                            sValue
-                        );
-                        oEvent.getSource().getBinding("items").filter([oFilter]);
-                    },
-                    confirm: function(oEvent) {
-                        var oSelectedItem = oEvent.getParameter("selectedItem");
-                        if (oSelectedItem) {
-                            var sCode = oSelectedItem.getTitle();
-                            // Set the selected currency code to your model
-                            this.getView().getModel("oModel").setProperty("/currencyCode", sCode);
-                        }
-                    }.bind(this)
-                });
+        //     if (!this._oDialog) {
+        //         this._oDialog = new sap.m.SelectDialog({
+        //             title: "Select Currency",
+        //             items: {
+        //                 path: "/currencies",
+        //                 template: new sap.m.StandardListItem({
+        //                     title: "{code}",
+        //                     description: "{name}"
+        //                 })
+        //             },
+        //             search: function(oEvent) {
+        //                 var sValue = oEvent.getParameter("value");
+        //                 var oFilter = new sap.ui.model.Filter(
+        //                     "code",
+        //                     sap.ui.model.FilterOperator.Contains,
+        //                     sValue
+        //                 );
+        //                 oEvent.getSource().getBinding("items").filter([oFilter]);
+        //             },
+        //             confirm: function(oEvent) {
+        //                 var oSelectedItem = oEvent.getParameter("selectedItem");
+        //                 if (oSelectedItem) {
+        //                     var sCode = oSelectedItem.getTitle();
+        //                     // Set the selected currency code to your model
+        //                     this.getView().getModel("oModel").setProperty("/currencyCode", sCode);
+        //                 }
+        //             }.bind(this)
+        //         });
                 
-                this._oDialog.setModel(oCurrencyModel);
-            }
+        //         this._oDialog.setModel(oCurrencyModel);
+        //     }
             
-            this._oDialog.open();
+        //     this._oDialog.open();
+        // },
+
+        onCurrencyValueHelpRequest: function () {
+            if (!this._oValueHelpDialog) {
+                Fragment.load({
+                    id: this.getView().getId(),
+                    name: "y4cr2r020e249.view.CurrencyValueHelp",
+                    controller: this
+                }).then(function (oDialog) {
+                    this._oValueHelpDialog = oDialog;
+                    this.getView().addDependent(this._oValueHelpDialog);
+                    this._oValueHelpDialog.open();
+                }.bind(this));
+            } else {
+                this._oValueHelpDialog.open();
+            }
+        },
+
+        onCurrencyValueHelpCancel: function () {
+            this._oValueHelpDialog.close();
+        },
+
+        onCurrencyListSelect: function (oEvent) {
+            var oSelectedItem = oEvent.getParameter("listItem");
+            var sCurrency = oSelectedItem.getTitle();
+            this.getView().getModel().setProperty("/selectedCurrency", sCurrency);
+            this._oValueHelpDialog.close();
         },
 
         onHeaderTextValueHelpRequest: function () {
