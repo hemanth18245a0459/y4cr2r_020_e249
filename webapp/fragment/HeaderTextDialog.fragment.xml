@@ -1,4 +1,25 @@
-<core:FragmentDefinition xmlns="sap.m"
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		noDataText="No Products Found"
+		title="Select Header Text"
+		liveChange=".onHeaderTexthandleSearch"
+		searchPlaceholder="Select Header Text"
+		confirm=".onHeaderTexthandleClose"
+		cancel=".onHeaderTexthandleClose"
+		showClearButton="true"
+		items="{
+			path: 'oModel>/Territories'
+		}">
+		<StandardListItem
+			title="{oModel>TerritoryDescription}"
+			description="{oModel>TerritoryID}"/>
+	</SelectDialog>
+</core:FragmentDefinition>
+
+
+<!-- <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
     <TableSelectDialog id="headerTextDialog" noDataText="No Products Found" title="Select Header Text" search=".HeaderTexthandleSearch" confirm=".HeaderTexthandleClose" cancel=".HeaderTexthandleClose" contentWidth="200px" contentHeight="400px" items="{path : 'oTableModel>/aTerritories'}">
 
@@ -15,4 +36,4 @@
             </ColumnListItem>
         </items>
     </TableSelectDialog>
-</core:FragmentDefinition>
+</core:FragmentDefinition> -->

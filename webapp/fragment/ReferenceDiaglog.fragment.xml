@@ -1,7 +1,32 @@
-<core:FragmentDefinition xmlns="sap.m"
-    xmlns:core="sap.ui.core">
-    <TableSelectDialog id="refDialog" noDataText="No Products Found" title="Select Reference" search=".ReferencehandleSearch" confirm=".ReferencehandleClose" cancel=".ReferencehandleClose" contentWidth="200px" contentHeight="400px" items="{path : 'oTableModel>/aSuppliers'}">
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		noDataText="No Data Found"
+		title="Select Reference"
+		liveChange=".onReferencehandleSearch"
+		searchPlaceholder="Select Reference"
+		confirm=".onReferencehandleClose"
+		cancel=".onReferencehandleClose"
+		showClearButton="true"
+		items="{
+			path: 'oModel>/Suppliers'
+		}">
+		<StandardListItem title="{oModel>Address}"/>
+	</SelectDialog>
+</core:FragmentDefinition>
 
+<!-- <core:FragmentDefinition xmlns="sap.m"
+    xmlns:core="sap.ui.core">
+    <TableSelectDialog id="refDialog" 
+    noDataText="No Products Found" 
+    title="Select Reference" 
+    search=".onReferencehandleSearch" 
+    confirm=".onReferencehandleClose" 
+    cancel=".onReferencehandleClose" 
+    contentWidth="200px" 
+    contentHeight="400px" 
+    items="{path : 'oModel>/Suppliers'}">
         <columns>
             <Column id="refcolAddress" minScreenWidth="Tablet" demandPopin="true">
                 <Text id="reflblAddress" text="Address" />
@@ -10,9 +35,9 @@
         <items>
             <ColumnListItem id="refcliCustomerItem" vAlign="Middle" press="onListItemPress" type="Navigation">
                 <cells>
-                    <Text id="reftxtAddress" text="{oTableModel>Address}" />
+                    <Text id="reftxtAddress" text="{oModel>Address}" />
                 </cells>
             </ColumnListItem>
         </items>
     </TableSelectDialog>
-</core:FragmentDefinition>
+</core:FragmentDefinition> -->

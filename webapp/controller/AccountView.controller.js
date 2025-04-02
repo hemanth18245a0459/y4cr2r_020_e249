@@ -9,6 +9,8 @@ sap.ui.define([
 ], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency) {
     "use strict";
 
+    var XLSX = window.XLSX;
+
     return Controller.extend("y4cr2r020e249.controller.AccountView", {
 
         onInit: function () {
@@ -43,51 +45,20 @@ sap.ui.define([
                         "txtAssignmentNumber": "ASG1002",
                         "txtItemText": "Item description 2",
                         "txtProfitCenter": "PC200"
-                    },
-                    {
-                        "txtCompanyCode": "3000",
-                        "txtAmountDocCurr": "3500.00",
-                        "txtAmountLocCurr": "3400.00",
-                        "txtGlAccount": "400003",
-                        "txtVendorPos": "VP1003",
-                        "txtCustomerPos": "CP2003",
-                        "txtCostCenter": "CC300",
-                        "txtOrderNumber": "ORD1003",
-                        "txtAssignmentNumber": "ASG1003",
-                        "txtItemText": "Item description 3",
-                        "txtProfitCenter": "PC300"
-                    },
-                    {
-                        "txtCompanyCode": "4000",
-                        "txtAmountDocCurr": "4500.75",
-                        "txtAmountLocCurr": "4400.60",
-                        "txtGlAccount": "400004",
-                        "txtVendorPos": "VP1004",
-                        "txtCustomerPos": "CP2004",
-                        "txtCostCenter": "CC400",
-                        "txtOrderNumber": "ORD1004",
-                        "txtAssignmentNumber": "ASG1004",
-                        "txtItemText": "Item description 4",
-                        "txtProfitCenter": "PC400"
-                    },
-                    {
-                        "txtCompanyCode": "5000",
-                        "txtAmountDocCurr": "5500.25",
-                        "txtAmountLocCurr": "5400.25",
-                        "txtGlAccount": "400005",
-                        "txtVendorPos": "VP1005",
-                        "txtCustomerPos": "CP2005",
-                        "txtCostCenter": "CC500",
-                        "txtOrderNumber": "ORD1005",
-                        "txtAssignmentNumber": "ASG1005",
-                        "txtItemText": "Item description 5",
-                        "txtProfitCenter": "PC500"
                     }
                 ],
                 notifications: [],
                 notificationCount: 0,
                 tableKey: "",
-                currencyCode: "",
+                // currencyCode: "",
+                currencies: [
+                    { code: "USD" },
+                    { code: "EUR" },
+                    { code: "JPY" },
+                    { code: "GBP" },
+                    { code: "AUD" }
+                ],
+                selectedCurrency: "",
                 amount: 0
             };
 
@@ -203,7 +174,7 @@ sap.ui.define([
         //         { code: "JPY", name: "Japanese Yen" }
         //     ];
             
-        //     var oCurrencyModel = new sap.ui.model.json.JSONModel({
+        //     var oCurrencyModel = new JSONModel({
         //         currencies: aCurrencies
         //     });
             
@@ -219,11 +190,7 @@ sap.ui.define([
         //             },
         //             search: function(oEvent) {
         //                 var sValue = oEvent.getParameter("value");
-        //                 var oFilter = new sap.ui.model.Filter(
-        //                     "code",
-        //                     sap.ui.model.FilterOperator.Contains,
-        //                     sValue
-        //                 );
+        //                 var oFilter = new Filter("code", FilterOperator.Contains, sValue);
         //                 oEvent.getSource().getBinding("items").filter([oFilter]);
         //             },
         //             confirm: function(oEvent) {
@@ -242,133 +209,240 @@ sap.ui.define([
         //     this._oDialog.open();
         // },
 
-        onCurrencyValueHelpRequest: function () {
-            if (!this._oValueHelpDialog) {
-                Fragment.load({
-                    id: this.getView().getId(),
-                    name: "y4cr2r020e249.view.CurrencyValueHelp",
+        // onCurrencyValueHelpRequest: function () {
+        //     if (!this._oCurrencyValueHelpDialog) {
+        //         Fragment.load({
+        //             id: this.getView().getId(),
+        //             name: "y4cr2r020e249.fragment.CurrencyValueHelp",
+        //             controller: this
+        //         }).then(function (oDialog) {
+        //             this._oCurrencyValueHelpDialog = oDialog;
+        //             this.getView().addDependent(this._oCurrencyValueHelpDialog);
+        //             this._oCurrencyValueHelpDialog.open();
+        //         }.bind(this));
+        //     } else {
+        //         this._oCurrencyValueHelpDialog.open();
+        //     }
+        // },
+
+        // onCurrencyValueHelpCancel: function () {
+        //     this._oCurrencyValueHelpDialog.close();
+        // },
+
+        // onCurrencyListSelect: function (oEvent) {
+        //     var oSelectedItem = oEvent.getParameter("listItem");
+        //     var sCurrency = oSelectedItem.getTitle();
+        //     this.getView().getModel().setProperty("/selectedCurrency", sCurrency);
+        //     this._oCurrencyValueHelpDialog.close();
+        // },
+
+        onCurrencyValueHelpRequest: function (oEvent) {
+            var that = this;
+            var oView = this.getView();
+
+            if (!this._oCurrencyValueHelpDialog) {
+                this._oCurrencyValueHelpDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "y4cr2r020e249.fragment.CurrencyValueHelp",
                     controller: this
-                }).then(function (oDialog) {
-                    this._oValueHelpDialog = oDialog;
-                    this.getView().addDependent(this._oValueHelpDialog);
-                    this._oValueHelpDialog.open();
-                }.bind(this));
-            } else {
-                this._oValueHelpDialog.open();
+                }).then(function (oCurrencyDialog) {
+                    oView.addDependent(oCurrencyDialog);
+                    this.getView().addDependent(this._oCurrencyValueHelpDialog);
+                    return oCurrencyDialog;
+                });
             }
+            this._oCurrencyValueHelpDialog.then(function(oCurrencyDialog){
+				oCurrencyDialog.open();
+			}.bind(this));
         },
 
-        onCurrencyValueHelpCancel: function () {
-            this._oValueHelpDialog.close();
+        onCurrencyhandleSearch: function (oEvent) {
+            var that = this;
+            var sValue = oEvent.getParameter("value");
+            var oBinding = oEvent.getParameter("itemsBinding");
+            if (!sValue) {
+                oBinding.filter([]);
+            } else {
+                var oFilter = new Filter("code", FilterOperator.Contains, sValue);
+                oBinding.filter([oFilter]);
+            }
         },
 
         onCurrencyListSelect: function (oEvent) {
             var oSelectedItem = oEvent.getParameter("listItem");
             var sCurrency = oSelectedItem.getTitle();
             this.getView().getModel().setProperty("/selectedCurrency", sCurrency);
-            this._oValueHelpDialog.close();
+            this._oCurrencyValueHelpDialog.close();
         },
 
-        onHeaderTextValueHelpRequest: function () {
+        // onHeaderTextValueHelpRequest: function () {
+        //     var that = this;
+        //     // Only load data if it hasn't been loaded yet
+        //     var oTableModel = this.getView().getModel("oTableModel");
+        //     var aTerritoriesData = oTableModel.getProperty("/aTerritories");
+            
+        //     if (!this._oHeaderTextDialog) {
+        //         this._oHeaderTextDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.HeaderTextDialog", this);
+        //         this.getView().addDependent(this._oHeaderTextDialog);
+                
+        //         this._oHeaderTextDialog.attachSearch(this.onHeaderTextSearchFilter, this);
+        //         this._oHeaderTextDialog.attachLiveChange(this.onHeaderTextSearchFilter, this);
+        //     }
+            
+        //     if (!aTerritoriesData || aTerritoriesData.length === 0) {
+        //         sap.ui.core.BusyIndicator.show(0);
+        //         var oModel = this.getView().getModel("oModel");
+        //         var oParams = "TerritoryDescription"
+                
+        //         oModel.read("/Territories", {
+        //             urlParameters: oParams,
+        //             success: function (oData) {
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 oTableModel.setProperty("/aTerritories", oData.results);
+        //                 that._oHeaderTextDialog.open();
+        //             },
+        //             error: function (oError) {
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 console.error("Error reading data:", oError);
+        //                 // Show error message to user
+        //                 sap.m.MessageToast.show("Error loading company data");
+        //             }
+        //         });
+        //     } else {
+        //         this._oHeaderTextDialog.open();
+        //     }
+
+        // },
+
+        onHeaderTextValueHelpRequest: function(oEvent) {
             var that = this;
-            // Only load data if it hasn't been loaded yet
-            var oTableModel = this.getView().getModel("oTableModel");
-            var aTerritoriesData = oTableModel.getProperty("/aTerritories");
-            
-            if (!this._oHeaderTextDialog) {
-                this._oHeaderTextDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.HeaderTextDialog", this);
-                this.getView().addDependent(this._oHeaderTextDialog);
-                
-                this._oHeaderTextDialog.attachSearch(this.onHeaderTextSearchFilter, this);
-                this._oHeaderTextDialog.attachLiveChange(this.onHeaderTextSearchFilter, this);
-            }
-            
-            if (!aTerritoriesData || aTerritoriesData.length === 0) {
-                sap.ui.core.BusyIndicator.show(0);
-                var oModel = this.getView().getModel("oModel");
-                var oParams = "TerritoryDescription"
-                
-                oModel.read("/Territories", {
-                    urlParameters: oParams,
-                    success: function (oData) {
-                        sap.ui.core.BusyIndicator.hide();
-                        oTableModel.setProperty("/aTerritories", oData.results);
-                        that._oHeaderTextDialog.open();
-                    },
-                    error: function (oError) {
-                        sap.ui.core.BusyIndicator.hide();
-                        console.error("Error reading data:", oError);
-                        // Show error message to user
-                        sap.m.MessageToast.show("Error loading company data");
-                    }
-                });
-            } else {
-                this._oHeaderTextDialog.open();
-            }
+            var oView = this.getView();
 
+			if (!this._pHeaderTextValueHelpDialog) {
+				this._pHeaderTextValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "y4cr2r020e249.fragment.HeaderTextDialog",
+					controller: this
+				}).then(function (oValueHelpDialog){
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
+			}
+			this._pHeaderTextValueHelpDialog.then(function(oValueHelpDialog){
+				oValueHelpDialog.open();
+			}.bind(this));
         },
-        onHeaderTextSearchFilter: function (oEvent) {
-            var sValue = oEvent.getParameter("value") || oEvent.getParameter("newValue") || "";
-            var oBinding = oEvent.getSource().getBinding("items");
-            
+
+        onHeaderTexthandleSearch: function (oEvent) {
+            var that = this;
+            var sValue = oEvent.getParameter("value");
+            var oBinding = oEvent.getParameter("itemsBinding");
             if (!sValue) {
                 oBinding.filter([]);
             } else {
-                oBinding.filter(new Filter("TerritoryDescription", FilterOperator.Contains, sValue));
+                var oFilter = new Filter("TerritoryDescription", FilterOperator.Contains, sValue);
+                oBinding.filter([oFilter]);
             }
         },
 
-        HeaderTexthandleClose: function (oEvent) {
+        onHeaderTexthandleClose: function(oEvent) {
             var that = this;
-            var oSelectedItem = oEvent.getParameter("selectedItem");
-            if (oSelectedItem) {
-                var sTerritoryDescription = oSelectedItem.getCells()[0].getText().trim();;
-                this.byId("inputHeaderText").setValue(sTerritoryDescription);
-            };
+            var oSelectedItem = oEvent.getParameter("selectedItem"),
+				oInput = this.byId("inputHeaderText");
+
+			if (!oSelectedItem) {
+				// oInput.resetProperty("value");
+				return;
+			}
+			oInput.setValue(oSelectedItem.getTitle().trim());
         },
 
-        onReferenceValueHelpRequest: function() {
-            var that = this;
-            var oTableModel = this.getView().getModel("oTableModel");
 
-            if(!that.pRefDialog) {
-                that.pRefDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.ReferenceDiaglog", this);
-                that.getView().addDependent(that.pRefDialog);
-            }
-            if (!this.aSuppliersData || this.aSuppliersData.length === 0) {
-                sap.ui.core.BusyIndicator.show(0);
-                var oModel = this.getView().getModel("oModel");
-                var oParams = "Address";
-                // this.aSuppliersData = oTableModel.getProperty("/aSuppliers");
-                oModel.read("/Suppliers", {
-                    urlParameters: oParams,
-                    success: function(oData){
-                        sap.ui.core.BusyIndicator.hide();
-                        that.aSuppliersData = oData.results;
-                        oTableModel.setProperty("/aSuppliers", oData.results);
-                        that.pRefDialog.open();
-                    },
-                    error: function(oError) {
-                        sap.ui.core.BusyIndicator.hide();
-                        console.error("Error reading data:", oError);
-                        sap.m.MessageToast.show("Error loading company data");
-                    }
-                });
+        // onReferenceValueHelpRequest: function() {
+        //     var that = this;
+        //     var oTableModel = this.getView().getModel("oTableModel");
 
-            }
-            else {
-                that.pRefDialog.open();
-            }
+        //     if(!that.pRefDialog) {
+        //         that.pRefDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.ReferenceDiaglog", this);
+        //         that.getView().addDependent(that.pRefDialog);
+        //     }
+        //     if (!this.aSuppliersData || this.aSuppliersData.length === 0) {
+        //         sap.ui.core.BusyIndicator.show(0);
+        //         var oModel = this.getView().getModel("oModel");
+        //         var oParams = "Address";
+        //         // this.aSuppliersData = oTableModel.getProperty("/aSuppliers");
+        //         oModel.read("/Suppliers", {
+        //             urlParameters: oParams,
+        //             success: function(oData){
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 that.aSuppliersData = oData.results;
+        //                 oTableModel.setProperty("/aSuppliers", oData.results);
+        //                 that.pRefDialog.open();
+        //             },
+        //             error: function(oError) {
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 console.error("Error reading data:", oError);
+        //                 sap.m.MessageToast.show("Error loading company data");
+        //             }
+        //         });
+
+        //     }
+        //     else {
+        //         that.pRefDialog.open();
+        //     }
             
+        // },
+
+        // ReferencehandleClose: function(oEvent) {
+        //     var that = this;
+        //     var oSelectedItem = oEvent.getParameter("selectedItem");
+        //     if (oSelectedItem) {
+        //         var sAddress = oSelectedItem.getCells()[0].getText().trim();;
+        //         this.byId("inputReference").setValue(sAddress);
+        //     };
+        // },
+
+        onReferenceValueHelpRequest: function(oEvent) {
+            var that = this;
+            var oView = this.getView();
+
+			if (!this._pReferenceValueHelpDialog) {
+				this._pReferenceValueHelpDialog = Fragment.load({
+					id: oView.getId(),
+					name: "y4cr2r020e249.fragment.ReferenceDiaglog",
+					controller: this
+				}).then(function (oValueHelpDialog){
+					oView.addDependent(oValueHelpDialog);
+					return oValueHelpDialog;
+				});
+			}
+			this._pReferenceValueHelpDialog.then(function(oValueHelpDialog){
+				oValueHelpDialog.open();
+			}.bind(this));
         },
 
-        ReferencehandleClose: function(oEvent) {
+        onReferencehandleSearch: function (oEvent) {
             var that = this;
-            var oSelectedItem = oEvent.getParameter("selectedItem");
-            if (oSelectedItem) {
-                var sAddress = oSelectedItem.getCells()[0].getText().trim();;
-                this.byId("inputReference").setValue(sAddress);
-            };
+            var sValue = oEvent.getParameter("value");
+            var oBinding = oEvent.getParameter("itemsBinding");
+            if (!sValue) {
+                oBinding.filter([]);
+            } else {
+                var oFilter = new Filter("Address", FilterOperator.Contains, sValue);
+                oBinding.filter([oFilter]);
+            }
+        },
+
+        onReferencehandleClose: function(oEvent) {
+            var that = this;
+            var oSelectedItem = oEvent.getParameter("selectedItem"),
+				oInput = this.byId("inputReference");
+
+			if (!oSelectedItem) {
+				// oInput.resetProperty("value");
+				return;
+			}
+			oInput.setValue(oSelectedItem.getTitle().trim());
         },
 
         onShowData: function() {
@@ -490,7 +564,7 @@ sap.ui.define([
                 }
             }
 
-            aItems.push({
+            aItems.unshift({
                 txtCompanyCode: "",
                 txtAmountDocCurr: "",
                 txtAmountLocCurr: "",
@@ -503,33 +577,192 @@ sap.ui.define([
                 txtItemText: "",
                 txtProfitCenter: ""
             });
+            // aItems.unshift(oNewRow);
             oModel.setProperty("/items", aItems);
         },
 
-        onDelete: function () {
+        onDelete: function() {
             var oTable = this.byId("accountTable");
-
             var aSelectedIndices = oTable.getSelectedIndices();
+            var oModel = this.getView().getModel();
+            var aItems = oModel.getProperty("/items");
+        
             if (aSelectedIndices.length === 0) {
                 sap.m.MessageToast.show("Please select at least one row to delete.");
                 return;
             }
-
-            var oModel = this.getView().getModel();
-            var aItems = oModel.getProperty("/items");
-
-            aSelectedIndices.sort(function (a, b) { return b - a; });
-
-            aSelectedIndices.forEach(function (iIndex) {
-                aItems.splice(iIndex, 1);
+        
+            // Create a new array without the selected rows
+            var aNewItems = aItems.filter(function(item, index) {
+                return aSelectedIndices.indexOf(index) === -1;
             });
-
-            oModel.setProperty("/items", aItems);
-            oTable.clearSelection();
-
+        
+            // Update the model
+            oModel.setProperty("/items", aNewItems);
             sap.m.MessageToast.show("Selected row(s) deleted.");
         },
 
+        // onUpload: function (oEvent) {
+        //     var oFileUploader = this.byId("fileUploader");
+        //     var oFile = oFileUploader.oFileUpload.files[0]; // Access the selected file
+        
+        //     if (!oFile) {
+        //         MessageToast.show("Please select an Excel file first.");
+        //         return;
+        //     }
+        
+        //     var reader = new FileReader();
+        //     reader.onload = function (e) {
+        //         var data = e.target.result;
+        //         var workbook = XLSX.read(data, { type: "binary" });
+        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
+        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        
+        //         var oTableModel = this.getView().getModel("oTableModel");
+        //         oTableModel.setProperty("/items", excelData);
+        //         MessageToast.show("File uploaded successfully!");
+        //     }.bind(this);
+        
+        //     reader.onerror = function () {
+        //         MessageToast.show("Error reading the file.");
+        //     };
+        
+        //     reader.readAsBinaryString(oFile);
+        // },
+
+
+        // onUploadPress: function() {
+        //     // This will trigger the hidden file uploader when Upload button is clicked
+        //     // this.byId("fileUploader").openValueStateMessage();\
+        //      // This directly triggers the FileUploader to open
+        //      var oFileUploader = this.byId("fileUploader");
+        //      if (oFileUploader) {
+        //          // This is the correct way to programmatically trigger file selection
+        //          jQuery(oFileUploader.getFocusDomRef()).click();
+        //      }
+        // },
+        
+        // onFileChange: function(oEvent) {
+        //     // This will be called when a file is selected
+        //     var oFile = oEvent.getParameter("files")[0];
+        //     if (!oFile) {
+        //         MessageToast.show("No file selected");
+        //         return;
+        //     }
+            
+        //     this.processExcelFile(oFile);
+        // },
+        
+        // processExcelFile: function(oFile) {
+        //     var reader = new FileReader();
+            
+        //     reader.onload = function(e) {
+        //         var data = e.target.result;
+        //         var workbook = XLSX.read(data, { type: "binary" });
+        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
+        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                
+        //         // Map Excel data to your table model structure
+        //         var tableItems = excelData.map(function(item) {
+        //             return {
+        //                 "txtCompanyCode": item["Comp.Code"] || "",
+        //                 "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
+        //                 "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
+        //                 "txtGlAccount": item["G/L account"] || "",
+        //                 "txtVendorPos": item["Vendor pos."] || "",
+        //                 "txtCustomerPos": item["Customer pos."] || "",
+        //                 "txtCostCenter": item["Cost Center"] || "",
+        //                 "txtOrderNumber": item["Order Number"] || "",
+        //                 "txtAssignmentNumber": item["Assignment Number"] || "",
+        //                 "txtItemText": item["Item Text"] || "",
+        //                 "txtProfitCenter": item["Profit Center"] || ""
+        //             };
+        //         });
+                
+        //         var oModel = this.getView().getModel();
+        //         oModel.setProperty("/items", tableItems);
+        //         MessageToast.show("File uploaded successfully!");
+        //     }.bind(this);
+            
+        //     reader.onerror = function() {
+        //         MessageToast.show("Error reading the file.");
+        //     };
+            
+        //     reader.readAsBinaryString(oFile);
+        // },
+
+        onFileChange: function(oEvent) {
+            // This gets called when a file is selected
+            var oFile = oEvent.getParameter("files")[0];
+            if (!oFile) {
+                MessageToast.show("No file selected");
+                return;
+            }
+            
+            this.processExcelFile(oFile);
+        },
+        
+        // Process the Excel file
+        processExcelFile: function(oFile) {
+            
+            if (!XLSX) {
+                MessageToast.show("XLSX library not loaded. Please check your index.html file.");
+                return;
+            }
+            
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    // Use the modern approach instead of readAsBinaryString
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: "array" });
+                    var sheetName = workbook.SheetNames[0]; // Get the first sheet
+                    var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                    console.log("Excel Data:", excelData);
+                    if (excelData.length === 0) {
+                        MessageToast.show("No data found in the Excel file.");
+                        return;
+                    }
+                    
+                    // Log the first row to help with debugging
+                    console.log("First row of Excel data:", excelData[0]);
+                    
+                    // Map Excel data to your table model structure
+                    var tableItems = excelData.map(function(item) {
+                        return {
+                            "txtCompanyCode": item["Comp.Code"] || "",
+                            "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
+                            "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
+                            "txtGlAccount": item["G/L account"] || "",
+                            "txtVendorPos": item["Vendor pos."] || "",
+                            "txtCustomerPos": item["Customer pos."] || "",
+                            "txtCostCenter": item["Cost Center"] || "",
+                            "txtOrderNumber": item["Order Number"] || "",
+                            "txtAssignmentNumber": item["Assignment Number"] || "",
+                            "txtItemText": item["Item Text"] || "",
+                            "txtProfitCenter": item["Profit Center"] || ""
+                        };
+                    });
+                    
+                    var oModel = this.getView().getModel();
+                    oModel.setProperty("/items", tableItems);
+                    MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
+                } catch (error) {
+                    console.error("Error processing Excel file:", error);
+                    MessageToast.show("Error processing the Excel file. See console for details.");
+                }
+            }.bind(this);
+            
+            reader.onerror = function(error) {
+                console.error("FileReader error:", error);
+                MessageToast.show("Error reading the file.");
+            };
+            
+            // Using the modern approach instead of readAsBinaryString
+            reader.readAsArrayBuffer(oFile);
+        },
+    
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
             var aNotifications = oModel.getProperty("/notifications");

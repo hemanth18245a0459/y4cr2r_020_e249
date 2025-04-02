@@ -1,4 +1,22 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog id="currencyValueHelpDialog"
+		noDataText="No Data Found"
+		title="Select Currency"
+		liveChange=".onCurrencyhandleSearch"
+		searchPlaceholder="Select Currency"
+		confirm=".onCurrencyValueHelpCancel"
+		cancel=".onCurrencyValueHelpCancel"
+		showClearButton="true"
+		items="{
+			path: 'oModel>/currencies'
+		}">
+		<StandardListItem title="{oModel>code}"/>
+	</SelectDialog>
+</core:FragmentDefinition>
+
+<!-- <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
     <Dialog id="currencyValueHelpDialog" title="Select Currency" class="sapUiResponsivePadding--header sapUiResponsivePadding--content sapUiResponsivePadding--footer" stretch="true">
         <content>
             <List id="currencyList" mode="SingleSelectMaster" items="{/currencies}">
@@ -9,4 +27,4 @@
             <Button text="Cancel" press="onCurrencyValueHelpCancel" />
         </endButton>
     </Dialog>
-</core:FragmentDefinition>
+</core:FragmentDefinition> -->

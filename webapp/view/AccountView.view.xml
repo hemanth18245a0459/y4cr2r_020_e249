@@ -60,7 +60,8 @@
 						<ToolbarSpacer />
 						<Button id="btnShowData" type="Ghost" text="Show Data" press="onShowData" />
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
-						<Button id="btnUpload" type="Ghost" icon="sap-icon://upload" text="Upload" press="onUpload" />
+						<u:FileUploader id="fileUploader" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" iconOnly="false" buttonOnly="true" style="Emphasized" change="onFileChange" tooltip="Upload Excel File" />
+						<!-- <Button id="btnUpload" type="Ghost" icon="sap-icon://upload" text="Upload" press="onUploadPress" /> -->
 						<Button id="btnSimulation" type="Success" icon="sap-icon://validate" text="Simulation" press="onSimulation" />
 						<Button id="btnPost" type="Attention" icon="sap-icon://repost" text="Post" press="onPost" class="myAttentionBtn" />
 						<Button id="btnAdd" type="Emphasized" icon="sap-icon://add" text="Add" press="onAdd" />
