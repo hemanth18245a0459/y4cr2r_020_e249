@@ -26,3 +26,16 @@
     --sapButton_Emphasized_Background: rgba(37, 73, 231, 0.751);
     --sapButton_Attention_Background: rgba(255, 197, 90, 0.189);
 }
+
+/* Remove column separators */
+.noColumnBorders .sapUiTableCell,
+.noColumnBorders .sapUiTableHeaderCell,
+.noColumnBorders .sapUiTableTr > td,
+.noColumnBorders .sapUiTableCellInner {
+    border-right: none !important;
+}
+
+/* Remove the table's right border */
+.noColumnBorders .sapUiTableCtrl {
+    border-right: none !important;
+}

@@ -53,7 +53,10 @@
 			</f:SimpleForm>
 
 			<!-- Table Section -->
-			<t:Table id="accountTable" class="sapUiSmallMarginTop" rows="{oTableModel>/items}" selectionMode="MultiToggle" paste="onPaste" ariaLabelledBy="title">
+			<t:Table id="accountTable" class="sapUiSmallMarginTop noColumnBorders" rows="{oTableModel>/items}" selectionMode="MultiToggle" showSeparators="None" paste="onPaste" ariaLabelledBy="title">
+				<t:rowSettingsTemplate>
+					<t:RowSettings highlight="None" />
+				</t:rowSettingsTemplate>
 				<t:extension>
 					<OverflowToolbar id="tableToolbar">
 						<Title id="tableTitle" text="{= 'Items (' + ${/items}.length + ')' }" />
@@ -85,7 +88,7 @@
 							<Input id="txtAmountDocCurr" value="{oTableModel>txtAmountDocCurr}" />
 						</t:template>
 					</t:Column>
-					
+
 					<!-- Column 3: G/L account -->
 					<t:Column id="colGlAccount" width="8rem">
 						<Label id="lblGlAccount" text="G/L account" />
@@ -114,7 +117,7 @@
 							<Input id="txtCostCenter" value="{oTableModel>txtCostCenter}" />
 						</t:template>
 					</t:Column>
-					
+
 					<!-- Column 7: Assignment Number -->
 					<t:Column id="colAssignmentNumber" width="11rem">
 						<Label id="lblAssignmentNumber" text="Assignment Number" />
@@ -123,27 +126,35 @@
 						</t:template>
 					</t:Column>
 					<!-- Column 8: Profit Center -->
-					<t:Column id="colProfitCenter" width="9rem">
+					<t:Column id="colProfitCenter" width="8rem">
 						<Label id="lblProfitCenter" text="Profit Center" />
 						<t:template>
 							<Input id="txtProfitCenter" value="{oTableModel>txtProfitCenter}" />
 						</t:template>
 					</t:Column>
 					<!-- Column 9: Item Text -->
-					<t:Column id="colItemText" width="9rem">
+					<t:Column id="colItemText" width="12.5rem">
 						<Label id="lblItemText" text="Item Text" />
 						<t:template>
 							<Input id="txtItemText" value="{oTableModel>txtItemText}" />
 						</t:template>
 					</t:Column>
-					<!-- Column 9: Item Text -->
-					<t:Column id="colItemIcon" width="9rem">
-						<Label id="lblItemIcon" text="" />
+					<!-- Column 9: Status Icon -->
+					<t:Column id="colStatus" width="4rem" hAlign="Center">
+						<Label id="lblStatus" text="Status" />
 						<t:template>
-							<Input id="txtItemIcon" value="" />
+							<!-- <core:Icon id="statusIcon" src="{= ${oTableModel>validationStatus} === 'valid' ? 'sap-icon://message-success' : ${oTableModel>validationStatus} === 'invalid' ? 'sap-icon://message-error' : 'sap-icon://message-warning' }" color="{= ${oTableModel>validationStatus} === 'valid' ? 'green' : ${oTableModel>validationStatus} === 'invalid' ? 'red' : 'yellow' }" size="1.5rem">
+							</core:Icon> -->
+							<!-- <core:Icon id="statusIcon" src="sap-icon://circle-task" color="{= ${oTableModel>validationStatus} === 'valid' ? 'green' : ${oTableModel>validationStatus} === 'invalid' ? 'red' : 'yellow' }" size="1.5rem">
+							</core:Icon> -->
+							<core:Icon id="statusIcon" 
+								src="{= ${oTableModel>validationStatus} === 'valid' ? 'sap-icon://status-positive' : ${oTableModel>validationStatus} === 'invalid' ? 'sap-icon://status-negative' : 'sap-icon://status-critical' }" 
+								color="{= ${oTableModel>validationStatus} === 'valid' ? '#107e3e' : ${oTableModel>validationStatus} === 'invalid' ? '#bb0000' : '#e9730c' }"
+								tooltip="{= ${oTableModel>validationStatus} === 'valid' ? 'Valid' : ${oTableModel>validationStatus} === 'invalid' ? 'Invalid' : 'Pending validation' }">
+							</core:Icon>
 						</t:template>
 					</t:Column>
-					
+
 				</t:columns>
 			</t:Table>
 		</VBox>
