@@ -1,6 +1,6 @@
 <core:FragmentDefinition xmlns="sap.m"
     xmlns:core="sap.ui.core">
-    <TableSelectDialog id="compCodeDialog" noDataText="No Products Found" title="Select Company" search=".handleSearch" confirm=".handleClose" cancel=".handleClose" contentWidth="500px" contentHeight="400px" items="{path : 'oTableModel>/aCompanyCode'}">
+    <TableSelectDialog id="compCodeDialog" noDataText="No Products Found" title="Select Company" search=".handleSearch" confirm=".onComapnyCodehandleClose" cancel=".onComapnyCodehandleClose" contentWidth="500px" contentHeight="400px" items="{path : 'oTableModel>/aCompanyCode'}">
 
         <columns>
             <Column id="compCodecolCustomerID" minScreenWidth="Tablet" demandPopin="true">

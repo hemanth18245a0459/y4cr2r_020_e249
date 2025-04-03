@@ -5,8 +5,9 @@ sap.ui.define([
     "sap/ui/core/Fragment",
     'sap/ui/model/Filter',
 	'sap/ui/model/FilterOperator',
-    "sap/ui/model/type/Currency"
-], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency) {
+    "sap/ui/model/type/Currency",
+    "sap/m/MessageBox"
+], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency, MessageBox) {
     "use strict";
 
     var XLSX = window.XLSX;
@@ -20,32 +21,7 @@ sap.ui.define([
             var oFiscalYearPicker = this.byId("inputFiscalYear");
             var oData = {
                 items: [
-                    {
-                        "txtCompanyCode": "1000",
-                        "txtAmountDocCurr": "1500.00",
-                        "txtAmountLocCurr": "1400.00",
-                        "txtGlAccount": "400001",
-                        "txtVendorPos": "VP1001",
-                        "txtCustomerPos": "CP2001",
-                        "txtCostCenter": "CC100",
-                        "txtOrderNumber": "ORD1001",
-                        "txtAssignmentNumber": "ASG1001",
-                        "txtItemText": "Item description 1",
-                        "txtProfitCenter": "PC100"
-                    },
-                    {
-                        "txtCompanyCode": "2000",
-                        "txtAmountDocCurr": "2500.50",
-                        "txtAmountLocCurr": "2450.75",
-                        "txtGlAccount": "400002",
-                        "txtVendorPos": "VP1002",
-                        "txtCustomerPos": "CP2002",
-                        "txtCostCenter": "CC200",
-                        "txtOrderNumber": "ORD1002",
-                        "txtAssignmentNumber": "ASG1002",
-                        "txtItemText": "Item description 2",
-                        "txtProfitCenter": "PC200"
-                    }
+                    
                 ],
                 notifications: [],
                 notificationCount: 0,
@@ -60,6 +36,7 @@ sap.ui.define([
                 ],
                 selectedCurrency: "",
                 amount: 0
+                
             };
 
             // Create a new JSON model with the empty data
@@ -68,8 +45,12 @@ sap.ui.define([
             // Set the model to the view
             this.getView().setModel(oModel);
 
+            // this.getView().setModel(oModel, "oModel");
+            // console.log("Model set in onInit:", this.getView().getModel("oModel").getProperty("/currencies"));
+
             var oTableModel = new JSONModel(oData);
             this.getView().setModel(oTableModel, "oTableModel");
+            console.log("Model set in onInit:", this.getView().getModel("oTableModel").getProperty("/currencies"));
 
 
             this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
@@ -86,17 +67,17 @@ sap.ui.define([
             }
         },
 
-        onReadData: function () {
-            var oModel = this.getView().getModel("oModel");
-            oModel.read("/Customers", {
-                success: function (oData, response) {
-                    console.log("Customers data:", oData);
-                },
-                error: function (oError) {
-                    console.error("Error reading data:", oError);
-                }
-            });
-        },
+        // onReadData: function () {
+        //     var oModel = this.getView().getModel("oModel");
+        //     oModel.read("/Customers", {
+        //         success: function (oData, response) {
+        //             console.log("Customers data:", oData);
+        //         },
+        //         error: function (oError) {
+        //             console.error("Error reading data:", oError);
+        //         }
+        //     });
+        // },
 
 
         onCompanyCodeValueHelpRequest: function (oEvent) {
@@ -108,8 +89,8 @@ sap.ui.define([
                 this._oCompCodeDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.CompanyCodeDialog", this);
                 this.getView().addDependent(this._oCompCodeDialog);
                 
-                this._oCompCodeDialog.attachSearch(this.onSearchFilter, this);
-                this._oCompCodeDialog.attachLiveChange(this.onSearchFilter, this);
+                this._oCompCodeDialog.attachSearch(this.onCompanyCodeSearchFilter, this);
+                this._oCompCodeDialog.attachLiveChange(this.onCompanyCodeSearchFilter, this);
             }
             
             if (!aCompanyData || aCompanyData.length === 0) {
@@ -137,7 +118,7 @@ sap.ui.define([
             }
         },
         
-        onSearchFilter: function (oEvent) {
+        onCompanyCodeSearchFilter: function (oEvent) {
             var sValue = oEvent.getParameter("value") || oEvent.getParameter("newValue") || "";
             var oBinding = oEvent.getSource().getBinding("items");
             
@@ -156,7 +137,7 @@ sap.ui.define([
             }
         },
 
-        handleClose: function(oEvent) {
+        onComapnyCodehandleClose: function(oEvent) {
             var that = this;
             var oSelectedItem = oEvent.getParameter("selectedItem");
             
@@ -166,153 +147,87 @@ sap.ui.define([
             }
         },
 
-        // onCurrencyValueHelpRequest: function(oEvent) {
-        //     var aCurrencies = [
-        //         { code: "USD", name: "US Dollar" },
-        //         { code: "EUR", name: "Euro" },
-        //         { code: "GBP", name: "British Pound" },
-        //         { code: "JPY", name: "Japanese Yen" }
-        //     ];
-            
-        //     var oCurrencyModel = new JSONModel({
-        //         currencies: aCurrencies
-        //     });
-            
-        //     if (!this._oDialog) {
-        //         this._oDialog = new sap.m.SelectDialog({
-        //             title: "Select Currency",
-        //             items: {
-        //                 path: "/currencies",
-        //                 template: new sap.m.StandardListItem({
-        //                     title: "{code}",
-        //                     description: "{name}"
-        //                 })
-        //             },
-        //             search: function(oEvent) {
-        //                 var sValue = oEvent.getParameter("value");
-        //                 var oFilter = new Filter("code", FilterOperator.Contains, sValue);
-        //                 oEvent.getSource().getBinding("items").filter([oFilter]);
-        //             },
-        //             confirm: function(oEvent) {
-        //                 var oSelectedItem = oEvent.getParameter("selectedItem");
-        //                 if (oSelectedItem) {
-        //                     var sCode = oSelectedItem.getTitle();
-        //                     // Set the selected currency code to your model
-        //                     this.getView().getModel("oModel").setProperty("/currencyCode", sCode);
-        //                 }
-        //             }.bind(this)
-        //         });
-                
-        //         this._oDialog.setModel(oCurrencyModel);
-        //     }
-            
-        //     this._oDialog.open();
-        // },
+        validateDate: function (oEvent) {
+            var oDatePicker = oEvent.getSource();
+            var oDate = oDatePicker.getDateValue();
 
-        // onCurrencyValueHelpRequest: function () {
-        //     if (!this._oCurrencyValueHelpDialog) {
-        //         Fragment.load({
-        //             id: this.getView().getId(),
-        //             name: "y4cr2r020e249.fragment.CurrencyValueHelp",
-        //             controller: this
-        //         }).then(function (oDialog) {
-        //             this._oCurrencyValueHelpDialog = oDialog;
-        //             this.getView().addDependent(this._oCurrencyValueHelpDialog);
-        //             this._oCurrencyValueHelpDialog.open();
-        //         }.bind(this));
-        //     } else {
-        //         this._oCurrencyValueHelpDialog.open();
-        //     }
-        // },
+            if (!oDate) {
+                oDatePicker.setValueState("Error");
+                oDatePicker.setValueStateText("Please enter a valid date");
+                return false;
+            } else {
+                oDatePicker.setValueState("None");
+                return true;
+            }
+        },
+        onDocumentDateChange: function (oEvent) {
+            this.validateDate(oEvent);
+        },
+        onPostingDateChange: function (oEvent) {
+            this.validateDate(oEvent);
+        },
 
-        // onCurrencyValueHelpCancel: function () {
-        //     this._oCurrencyValueHelpDialog.close();
-        // },
-
-        // onCurrencyListSelect: function (oEvent) {
-        //     var oSelectedItem = oEvent.getParameter("listItem");
-        //     var sCurrency = oSelectedItem.getTitle();
-        //     this.getView().getModel().setProperty("/selectedCurrency", sCurrency);
-        //     this._oCurrencyValueHelpDialog.close();
-        // },
+        onPostingPeriodChange: function (oEvent) {
+            this.validateDate(oEvent);
+        },
+        
+        onFiscalYearChange: function (oEvent) {
+            var sValue = oEvent.getParameter("value");
+            var oInput = oEvent.getSource();
+            // Regular expression for YYYY format
+            var dateRegex = /^\d{4}$/;
+            if (!dateRegex.test(sValue)) {
+                // Invalid format
+                oInput.setValueState("Error");
+                oInput.setValueStateText("Please enter date in format YYYY");
+            } else {
+                // Valid format
+                oInput.setValueState("None");
+            }
+        },
 
         onCurrencyValueHelpRequest: function (oEvent) {
-            var that = this;
             var oView = this.getView();
-
             if (!this._oCurrencyValueHelpDialog) {
-                this._oCurrencyValueHelpDialog = Fragment.load({
+                Fragment.load({
                     id: oView.getId(),
                     name: "y4cr2r020e249.fragment.CurrencyValueHelp",
                     controller: this
-                }).then(function (oCurrencyDialog) {
-                    oView.addDependent(oCurrencyDialog);
-                    this.getView().addDependent(this._oCurrencyValueHelpDialog);
-                    return oCurrencyDialog;
+                }).then(function (oDialog) {
+                    console.log("Dialog loaded:", oDialog);
+                    this._oCurrencyValueHelpDialog = oDialog;
+                    oView.addDependent(this._oCurrencyValueHelpDialog);
+                    // Set the model on the dialog
+                    var oTableModel = oView.getModel("oTableModel");
+                    console.log("Currencies:", oTableModel.getProperty("/currencies"));
+                    this._oCurrencyValueHelpDialog.setModel(oTableModel, "oTableModel");
+                    // this._oCurrencyValueHelpDialog.setModel(oView.getModel("oModel"), "oModel");
+                    this._oCurrencyValueHelpDialog.open();
+                }.bind(this)).catch(function (error) {
+                    console.error("Failed to load fragment:", error);
                 });
+            } else {
+                // Ensure the model is set even if reusing the dialog
+                this._oCurrencyValueHelpDialog.setModel(oView.getModel("oModel"), "oModel");
+                this._oCurrencyValueHelpDialog.open();
             }
-            this._oCurrencyValueHelpDialog.then(function(oCurrencyDialog){
-				oCurrencyDialog.open();
-			}.bind(this));
+        },
+
+        onCurrencyValueHelpCancel: function (oEvent) {
+            var oSelectedItem = oEvent.getParameter("selectedItem");
+            // var oInput = this.byId("inputCurrency");
+            if (oSelectedItem) {
+                var sCurrency = oSelectedItem.getTitle();
+                this.getView().getModel("oTableModel").setProperty("/selectedCurrency", sCurrency);
+            }
         },
 
         onCurrencyhandleSearch: function (oEvent) {
-            var that = this;
             var sValue = oEvent.getParameter("value");
-            var oBinding = oEvent.getParameter("itemsBinding");
-            if (!sValue) {
-                oBinding.filter([]);
-            } else {
-                var oFilter = new Filter("code", FilterOperator.Contains, sValue);
-                oBinding.filter([oFilter]);
-            }
+            var oFilter = new sap.ui.model.Filter("code", FilterOperator.Contains, sValue);
+            var oBinding = oEvent.getSource().getBinding("items");
+            oBinding.filter([oFilter]);
         },
-
-        onCurrencyListSelect: function (oEvent) {
-            var oSelectedItem = oEvent.getParameter("listItem");
-            var sCurrency = oSelectedItem.getTitle();
-            this.getView().getModel().setProperty("/selectedCurrency", sCurrency);
-            this._oCurrencyValueHelpDialog.close();
-        },
-
-        // onHeaderTextValueHelpRequest: function () {
-        //     var that = this;
-        //     // Only load data if it hasn't been loaded yet
-        //     var oTableModel = this.getView().getModel("oTableModel");
-        //     var aTerritoriesData = oTableModel.getProperty("/aTerritories");
-            
-        //     if (!this._oHeaderTextDialog) {
-        //         this._oHeaderTextDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.HeaderTextDialog", this);
-        //         this.getView().addDependent(this._oHeaderTextDialog);
-                
-        //         this._oHeaderTextDialog.attachSearch(this.onHeaderTextSearchFilter, this);
-        //         this._oHeaderTextDialog.attachLiveChange(this.onHeaderTextSearchFilter, this);
-        //     }
-            
-        //     if (!aTerritoriesData || aTerritoriesData.length === 0) {
-        //         sap.ui.core.BusyIndicator.show(0);
-        //         var oModel = this.getView().getModel("oModel");
-        //         var oParams = "TerritoryDescription"
-                
-        //         oModel.read("/Territories", {
-        //             urlParameters: oParams,
-        //             success: function (oData) {
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 oTableModel.setProperty("/aTerritories", oData.results);
-        //                 that._oHeaderTextDialog.open();
-        //             },
-        //             error: function (oError) {
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 console.error("Error reading data:", oError);
-        //                 // Show error message to user
-        //                 sap.m.MessageToast.show("Error loading company data");
-        //             }
-        //         });
-        //     } else {
-        //         this._oHeaderTextDialog.open();
-        //     }
-
-        // },
 
         onHeaderTextValueHelpRequest: function(oEvent) {
             var that = this;
@@ -356,51 +271,6 @@ sap.ui.define([
 			}
 			oInput.setValue(oSelectedItem.getTitle().trim());
         },
-
-
-        // onReferenceValueHelpRequest: function() {
-        //     var that = this;
-        //     var oTableModel = this.getView().getModel("oTableModel");
-
-        //     if(!that.pRefDialog) {
-        //         that.pRefDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.ReferenceDiaglog", this);
-        //         that.getView().addDependent(that.pRefDialog);
-        //     }
-        //     if (!this.aSuppliersData || this.aSuppliersData.length === 0) {
-        //         sap.ui.core.BusyIndicator.show(0);
-        //         var oModel = this.getView().getModel("oModel");
-        //         var oParams = "Address";
-        //         // this.aSuppliersData = oTableModel.getProperty("/aSuppliers");
-        //         oModel.read("/Suppliers", {
-        //             urlParameters: oParams,
-        //             success: function(oData){
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 that.aSuppliersData = oData.results;
-        //                 oTableModel.setProperty("/aSuppliers", oData.results);
-        //                 that.pRefDialog.open();
-        //             },
-        //             error: function(oError) {
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 console.error("Error reading data:", oError);
-        //                 sap.m.MessageToast.show("Error loading company data");
-        //             }
-        //         });
-
-        //     }
-        //     else {
-        //         that.pRefDialog.open();
-        //     }
-            
-        // },
-
-        // ReferencehandleClose: function(oEvent) {
-        //     var that = this;
-        //     var oSelectedItem = oEvent.getParameter("selectedItem");
-        //     if (oSelectedItem) {
-        //         var sAddress = oSelectedItem.getCells()[0].getText().trim();;
-        //         this.byId("inputReference").setValue(sAddress);
-        //     };
-        // },
 
         onReferenceValueHelpRequest: function(oEvent) {
             var that = this;
@@ -511,97 +381,7 @@ sap.ui.define([
             that.odlgCustomerData.close();
         },
 
-        validateDate: function (oEvent) {
-            var oDatePicker = oEvent.getSource();
-            var oDate = oDatePicker.getDateValue();
-
-            if (!oDate) {
-                oDatePicker.setValueState("Error");
-                oDatePicker.setValueStateText("Please enter a valid date");
-                return false;
-            } else {
-                oDatePicker.setValueState("None");
-                return true;
-            }
-        },
-        onDocumentDateChange: function (oEvent) {
-            this.validateDate(oEvent);
-        },
-
-        onPostingDateChange: function (oEvent) {
-            this.validateDate(oEvent);
-        },
-
-        onPostingPeriodChange: function (oEvent) {
-            this.validateDate(oEvent);
-        },
         
-        onFiscalYearChange: function (oEvent) {
-            var sValue = oEvent.getParameter("value");
-            var oInput = oEvent.getSource();
-            // Regular expression for YYYY format
-            var dateRegex = /^\d{4}$/;
-            if (!dateRegex.test(sValue)) {
-                // Invalid format
-                oInput.setValueState("Error");
-                oInput.setValueStateText("Please enter date in format YYYY");
-            } else {
-                // Valid format
-                oInput.setValueState("None");
-            }
-        },
-
-        onAdd: function () {
-            var oModel = this.getView().getModel();
-            var aItems = oModel.getProperty("/items");
-
-            if (aItems.length > 0) {
-                var oLastRow = aItems[aItems.length - 1];
-
-                if (!oLastRow.txtCompanyCode || !oLastRow.txtAmountDocCurr) {
-                    sap.m.MessageToast.show("Please fill all mandatory fields before adding a new row.");
-                    return;
-                }
-            }
-
-            aItems.unshift({
-                txtCompanyCode: "",
-                txtAmountDocCurr: "",
-                txtAmountLocCurr: "",
-                txtGlAccount: "",
-                txtVendorPos: "",
-                txtCustomerPos: "",
-                txtCostCenter: "",
-                txtOrderNumber: "",
-                txtAssignmentNumber: "",
-                txtItemText: "",
-                txtProfitCenter: ""
-            });
-            // aItems.unshift(oNewRow);
-            oModel.setProperty("/items", aItems);
-        },
-
-        onDelete: function() {
-            var oTable = this.byId("accountTable");
-            var aSelectedIndices = oTable.getSelectedIndices();
-            var oModel = this.getView().getModel();
-            var aItems = oModel.getProperty("/items");
-        
-            if (aSelectedIndices.length === 0) {
-                sap.m.MessageToast.show("Please select at least one row to delete.");
-                return;
-            }
-        
-            // Create a new array without the selected rows
-            var aNewItems = aItems.filter(function(item, index) {
-                return aSelectedIndices.indexOf(index) === -1;
-            });
-        
-            // Update the model
-            oModel.setProperty("/items", aNewItems);
-            sap.m.MessageToast.show("Selected row(s) deleted.");
-        },
-
         // onUpload: function (oEvent) {
         //     var oFileUploader = this.byId("fileUploader");
         //     var oFile = oFileUploader.oFileUpload.files[0]; // Access the selected file
@@ -762,6 +542,64 @@ sap.ui.define([
             // Using the modern approach instead of readAsBinaryString
             reader.readAsArrayBuffer(oFile);
         },
+
+
+        onAdd: function () {
+            var inputCompanyCode = this.getView().byId("inputCompanyCode").getValue();
+            var inputDocumentDate = this.getView().byId("inputDocumentDate").getValue();
+            var inputPostingDate = this.getView().byId("inputPostingDate").getValue();
+            var inputPostingPeriod = this.getView().byId("inputPostingPeriod").getValue();
+            var inputFiscalYear = this.getView().byId("inputFiscalYear").getValue();
+            var inputCurrency = this.getView().byId("inputCurrency").getValue();
+            var inputHeaderText = this.getView().byId("inputHeaderText").getValue();
+            var inputReference = this.getView().byId("inputReference").getValue();
+            
+            if (inputCompanyCode === "" || inputDocumentDate === "" || inputPostingDate === "" || inputPostingPeriod === "" || inputCurrency === "" || inputFiscalYear === "" || inputHeaderText === "" || inputReference === "") {
+
+                MessageBox.error("Please select the mandatory fields");
+            }
+            else {
+                var obj = {
+                    "txtCompanyCode": inputCompanyCode,
+                    "txtAmountDocCurr": "",
+                    "txtGlAccount": "",
+                    "txtVendorPos": "",
+                    "txtCustomerPos": "",
+                    "txtCostCenter": "",
+                    "txtAssignmentNumber": "",
+                    "txtItemText": "",
+                    "txtProfitCenter": ""
+                };
+    
+                this.getView().getModel("oTableModel").getData().items.unshift(obj);
+                this.getView().getModel("oTableModel").updateBindings();
+
+
+            }
+
+        },
+
+        onDelete: function() {
+            var oTable = this.byId("accountTable");
+            var aSelectedIndices = oTable.getSelectedIndices();
+            var oModel = this.getView().getModel();
+            var aItems = oModel.getProperty("/items");
+        
+            if (aSelectedIndices.length === 0) {
+                sap.m.MessageToast.show("Please select at least one row to delete.");
+                return;
+            }
+        
+            // Create a new array without the selected rows
+            var aNewItems = aItems.filter(function(item, index) {
+                return aSelectedIndices.indexOf(index) === -1;
+            });
+        
+            // Update the model
+            oModel.setProperty("/items", aNewItems);
+            sap.m.MessageToast.show("Selected row(s) deleted.");
+        },
+
     
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
