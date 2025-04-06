@@ -415,72 +415,139 @@ sap.ui.define([
         //     }
         // },
 
-        onSimulation: function() {
-            var oModel = this.getView().getModel("oTableModel");
-            var aItems = oModel.getProperty("/items") || [];
-            var bAllValid = true;
-            var missingFields = {
-                companyCode: [],
-                amountDocCurr: []
-            };
-            var rowsWithErrors = 0;
+        // onSimulation: function() {
+        //     var oModel = this.getView().getModel("oTableModel");
+        //     var aItems = oModel.getProperty("/items") || [];
+        //     var bAllValid = true;
+        //     var missingFields = {
+        //         companyCode: [],
+        //         amountDocCurr: []
+        //     };
+        //     var rowsWithErrors = 0;
             
-            // Validate each row
-            aItems.forEach(function(oItem, index) {
-                var rowHasError = false;
+        //     // Validate each row
+        //     aItems.forEach(function(oItem, index) {
+        //         var rowHasError = false;
                 
-                // Check Company Code
-                if (!oItem.txtCompanyCode) {
-                    missingFields.companyCode.push(index + 1); // +1 for human-readable row numbers
-                    rowHasError = true;
-                }
+        //         // Check Company Code
+        //         if (!oItem.txtCompanyCode) {
+        //             missingFields.companyCode.push(index + 1); // +1 for human-readable row numbers
+        //             rowHasError = true;
+        //         }
                 
-                // Check Amount
-                if (!oItem.txtAmountDocCurr) {
-                    missingFields.amountDocCurr.push(index + 1);
-                    rowHasError = true;
-                } else if (isNaN(parseFloat(oItem.txtAmountDocCurr))) {
-                    // Valid number check
-                    missingFields.amountDocCurr.push(index + 1);
-                    rowHasError = true;
-                }
+        //         // Check Amount
+        //         if (!oItem.txtAmountDocCurr) {
+        //             missingFields.amountDocCurr.push(index + 1);
+        //             rowHasError = true;
+        //         } else if (isNaN(parseFloat(oItem.txtAmountDocCurr))) {
+        //             // Valid number check
+        //             missingFields.amountDocCurr.push(index + 1);
+        //             rowHasError = true;
+        //         }
                 
-                // Set validation status for this row
-                oItem.validationStatus = rowHasError ? "invalid" : "valid";
+        //         // Set validation status for this row
+        //         oItem.validationStatus = rowHasError ? "invalid" : "valid";
                 
-                // Track overall validation
-                if (rowHasError) {
-                    bAllValid = false;
-                    rowsWithErrors++;
-                }
+        //         // Track overall validation
+        //         if (rowHasError) {
+        //             bAllValid = false;
+        //             rowsWithErrors++;
+        //         }
+        //     });
+            
+        //     // Update model
+        //     oModel.setProperty("/items", aItems);
+            
+        //     // Force binding refresh to ensure UI updates
+        //     this.byId("accountTable").getBinding("rows").refresh();
+            
+        //     // Show appropriate message based on validation results
+        //     if (bAllValid) {
+        //         MessageToast.show("All items validated successfully!");
+        //     } else {
+        //         var errorMessage = "Validation errors found in " + rowsWithErrors + " row(s):\n";
+                
+        //         if (missingFields.companyCode.length > 0) {
+        //             errorMessage += "-> Missing Company Code in rows: " + missingFields.companyCode.join(", ") + "\n";
+        //         }
+                
+        //         if (missingFields.amountDocCurr.length > 0) {
+        //             errorMessage += "-> Missing or invalid Amount Doc.Curr. in rows: " + missingFields.amountDocCurr.join(", ") + "\n";
+        //         }
+                
+        //         errorMessage += "\nPlease fix the items marked in red.";
+                
+        //         MessageBox.error(errorMessage);
+        //     }
+        // },
+
+        onSimulation: function() {
+            const aItems = this.getView().getModel("oTableModel").getProperty("/items");
+            let errorRows = [];
+            
+            aItems.forEach((oItem, index) => {
+                const isValid = oItem.txtCompanyCode && 
+                                oItem.txtAmountDocCurr && 
+                                !isNaN(oItem.txtAmountDocCurr);
+                
+                oItem.validationStatus = isValid ? "valid" : "invalid";
+                if (!isValid) errorRows.push(index + 1);
             });
             
-            // Update model
-            oModel.setProperty("/items", aItems);
+            this.getView().getModel("oTableModel").refresh();
             
-            // Force binding refresh to ensure UI updates
-            this.byId("accountTable").getBinding("rows").refresh();
-            
-            // Show appropriate message based on validation results
-            if (bAllValid) {
-                MessageToast.show("All items validated successfully!");
-            } else {
-                var errorMessage = "Validation errors found in " + rowsWithErrors + " row(s):\n";
-                
-                if (missingFields.companyCode.length > 0) {
-                    errorMessage += "-> Missing Company Code in rows: " + missingFields.companyCode.join(", ") + "\n";
-                }
-                
-                if (missingFields.amountDocCurr.length > 0) {
-                    errorMessage += "-> Missing or invalid Amount Doc.Curr. in rows: " + missingFields.amountDocCurr.join(", ") + "\n";
-                }
-                
-                errorMessage += "\nPlease fix the items marked in red.";
-                
-                MessageBox.error(errorMessage);
+            if (errorRows.length > 0) {
+                MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
             }
         },
 
+        // onSimulation: function() {
+        //     const oTable = this.getView().byId("accountTable");
+        //     const oModel = this.getView().getModel("oTableModel");
+        //     const aItems = oModel.getProperty("/items");
+        //     let errorRows = [];
+            
+        //     // Validate each item
+        //     aItems.forEach((oItem, index) => {
+        //         const isValid = oItem.txtCompanyCode && 
+        //                         oItem.txtAmountDocCurr && 
+        //                         !isNaN(oItem.txtAmountDocCurr);
+                
+        //         // Update validation status
+        //         oItem.validationStatus = isValid ? "valid" : "invalid";
+        //         if (!isValid) errorRows.push(index + 1);
+        //     });
+            
+        //     // Update the model to refresh the UI
+        //     oModel.setProperty("/items", aItems);
+            
+        //     // Force the table to update immediately
+        //     oTable.getItems().forEach((oListItem, index) => {
+        //         // Get the icon control in the last cell
+        //         const oIcon = oListItem.getCells()[oListItem.getCells().length - 1];
+                
+        //         // Set icon properties based on validation status
+        //         const status = aItems[index].validationStatus;
+        //         oIcon.setColor(
+        //             status === "valid" ? "#107e3e" : 
+        //             status === "invalid" ? "#bb0000" : 
+        //             "#e9730c"
+        //         );
+                
+        //         oIcon.setTooltip(
+        //             status === "valid" ? "Valid" : 
+        //             status === "invalid" ? "Invalid" : 
+        //             "Pending validation"
+        //         );
+        //     });
+            
+        //     // Show error if any
+        //     if (errorRows.length > 0) {
+        //         MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
+        //     } else {
+        //         MessageBox.success("Simulation completed successfully!");
+        //     }
+        // },
 
         onAdd: function () {
             var inputCompanyCode = this.getView().byId("inputCompanyCode").getValue();

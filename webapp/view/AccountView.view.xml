@@ -53,13 +53,18 @@
 			</f:SimpleForm>
 
 			<!-- Table Section -->
-			<t:Table id="accountTable" class="sapUiSmallMarginTop noColumnBorders" rows="{oTableModel>/items}" selectionMode="MultiToggle" showSeparators="None" paste="onPaste" ariaLabelledBy="title">
-				<t:rowSettingsTemplate>
-					<t:RowSettings highlight="None" />
-				</t:rowSettingsTemplate>
-				<t:extension>
+			<Table id="accountTable" 
+				class="sapUiSmallMarginTop" 
+				items="{oTableModel>/items}" 
+				mode="MultiSelect"
+				paste="onPaste"
+				ariaLabelledBy="title"
+				sticky="ColumnHeaders,HeaderToolbar"
+				showSeparators="All">
+				
+				<headerToolbar>
 					<OverflowToolbar id="tableToolbar">
-						<Title id="tableTitle" text="{= 'Items (' + ${/items}.length + ')' }" />
+						<Title id="tableTitle" text="{= 'Items (' + ${oTableModel>/items}.length + ')' }" />
 						<ToolbarSpacer />
 						<Button id="btnShowData" type="Ghost" text="Show Data" press="onShowData" />
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
@@ -71,92 +76,103 @@
 						<Button id="btnDelete" type="Reject" icon="sap-icon://delete" text="Delete" press="onDelete" />
 						<Button id="btnClearFilters" type="Ghost" icon="sap-icon://decline" text="Clear Filters" press="onClearFilters" />
 					</OverflowToolbar>
-				</t:extension>
+				</headerToolbar>
 
-				<t:columns>
+				<columns>
 					<!-- Column 1: Comp.Code -->
-					<t:Column id="colCompanyCode" width="8rem">
-						<Label id="lblCompanyCode" required="true" text="Comp.Code" />
-						<t:template>
-							<Input id="txtCompanyCode" value="{oTableModel>txtCompanyCode}" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" />
-						</t:template>
-					</t:Column>
+					<Column id="colCompanyCode" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblCompanyCode" required="true" text="Comp.Code" />
+						</header>
+					</Column>
 					<!-- Column 2: Ammount Doc.Curr. -->
-					<t:Column id="colAmountDocCurr" width="10rem">
-						<Label id="lblAmountDocCurr" required="true" text="Amount Doc.Curr." />
-						<t:template>
-							<Input id="txtAmountDocCurr" value="{oTableModel>txtAmountDocCurr}" />
-						</t:template>
-					</t:Column>
-
+					<Column id="colAmountDocCurr" width="10rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblAmountDocCurr" required="true" text="Amount Doc.Curr." />
+						</header>
+					</Column>
 					<!-- Column 3: G/L account -->
-					<t:Column id="colGlAccount" width="8rem">
-						<Label id="lblGlAccount" text="G/L account" />
-						<t:template>
-							<Input id="txtGlAccount" value="{oTableModel>txtGlAccount}" />
-						</t:template>
-					</t:Column>
+					<Column id="colGlAccount" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblGlAccount" text="G/L account" />
+						</header>
+					</Column>
 					<!-- Column 4: Vendor pos. -->
-					<t:Column id="colVendorPos" width="8rem">
-						<Label id="lblVendorPos" text="Vendor pos." />
-						<t:template>
-							<Input id="txtVendorPos" value="{oTableModel>txtVendorPos}" />
-						</t:template>
-					</t:Column>
+					<Column id="colVendorPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblVendorPos" text="Vendor pos." />
+						</header>
+					</Column>
 					<!-- Column 5: Customer pos. -->
-					<t:Column id="colCustomerPos" width="8rem">
-						<Label id="lblCustomerPos" text="Customer pos." />
-						<t:template>
-							<Input id="txtCustomerPos" value="{oTableModel>txtCustomerPos}" />
-						</t:template>
-					</t:Column>
+					<Column id="colCustomerPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblCustomerPos" text="Customer pos." />
+						</header>
+					</Column>
 					<!-- Column 6: Cost Center -->
-					<t:Column id="colCostCenter" width="8rem">
-						<Label id="lblCostCenter" text="Cost Center" />
-						<t:template>
-							<Input id="txtCostCenter" value="{oTableModel>txtCostCenter}" />
-						</t:template>
-					</t:Column>
-
+					<Column id="colCostCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblCostCenter" text="Cost Center" />
+						</header>
+					</Column>
 					<!-- Column 7: Assignment Number -->
-					<t:Column id="colAssignmentNumber" width="11rem">
-						<Label id="lblAssignmentNumber" text="Assignment Number" />
-						<t:template>
-							<Input id="txtAssignmentNumber" value="{oTableModel>txtAssignmentNumber}" />
-						</t:template>
-					</t:Column>
+					<Column id="colAssignmentNumber" width="11rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblAssignmentNumber" text="Assignment Number" />
+						</header>
+					</Column>
 					<!-- Column 8: Profit Center -->
-					<t:Column id="colProfitCenter" width="8rem">
-						<Label id="lblProfitCenter" text="Profit Center" />
-						<t:template>
-							<Input id="txtProfitCenter" value="{oTableModel>txtProfitCenter}" />
-						</t:template>
-					</t:Column>
+					<Column id="colProfitCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblProfitCenter" text="Profit Center" />
+						</header>
+					</Column>
 					<!-- Column 9: Item Text -->
-					<t:Column id="colItemText" width="12.5rem">
-						<Label id="lblItemText" text="Item Text" />
-						<t:template>
+					<Column id="colItemText" width="12.5rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblItemText" text="Item Text" />
+						</header>
+					</Column>
+					<!-- Column 10: Status Icon -->
+					<Column id="colStatus" width="4rem" hAlign="Center" popinDisplay="Inline" demandPopin="true">
+						<header>
+							<Label id="lblStatus" text="" />
+						</header>
+					</Column>
+				</columns>
+
+				<items>
+					<ColumnListItem id="tableRow" type="Navigation" press="onRowPress">
+						<cells>
+							<!-- Cell 1: Company Code -->
+							<Input id="txtCompanyCode" value="{oTableModel>txtCompanyCode}" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" />
+							<!-- Cell 2: Amount Doc.Curr. -->
+							<Input id="txtAmountDocCurr" value="{oTableModel>txtAmountDocCurr}" />
+							<!-- Cell 3: G/L Account -->
+							<Input id="txtGlAccount" value="{oTableModel>txtGlAccount}" />
+							<!-- Cell 4: Vendor pos. -->
+							<Input id="txtVendorPos" value="{oTableModel>txtVendorPos}" />
+							<!-- Cell 5: Customer pos. -->
+							<Input id="txtCustomerPos" value="{oTableModel>txtCustomerPos}" />
+							<!-- Cell 6: Cost Center -->
+							<Input id="txtCostCenter" value="{oTableModel>txtCostCenter}" />
+							<!-- Cell 7: Assignment Number -->
+							<Input id="txtAssignmentNumber" value="{oTableModel>txtAssignmentNumber}" />
+							<!-- Cell 8: Profit Center -->
+							<Input id="txtProfitCenter" value="{oTableModel>txtProfitCenter}" />
+							<!-- Cell 9: Item Text -->
 							<Input id="txtItemText" value="{oTableModel>txtItemText}" />
-						</t:template>
-					</t:Column>
-					<!-- Column 9: Status Icon -->
-					<t:Column id="colStatus" width="4rem" hAlign="Center">
-						<Label id="lblStatus" text="Status" />
-						<t:template>
-							<!-- <core:Icon id="statusIcon" src="{= ${oTableModel>validationStatus} === 'valid' ? 'sap-icon://message-success' : ${oTableModel>validationStatus} === 'invalid' ? 'sap-icon://message-error' : 'sap-icon://message-warning' }" color="{= ${oTableModel>validationStatus} === 'valid' ? 'green' : ${oTableModel>validationStatus} === 'invalid' ? 'red' : 'yellow' }" size="1.5rem">
-							</core:Icon> -->
-							<!-- <core:Icon id="statusIcon" src="sap-icon://circle-task" color="{= ${oTableModel>validationStatus} === 'valid' ? 'green' : ${oTableModel>validationStatus} === 'invalid' ? 'red' : 'yellow' }" size="1.5rem">
-							</core:Icon> -->
+							<!-- Cell 10: Status Icon - Changed to dashed rhombus -->
 							<core:Icon id="statusIcon" 
-								src="{= ${oTableModel>validationStatus} === 'valid' ? 'sap-icon://status-positive' : ${oTableModel>validationStatus} === 'invalid' ? 'sap-icon://status-negative' : 'sap-icon://status-critical' }" 
-								color="{= ${oTableModel>validationStatus} === 'valid' ? '#107e3e' : ${oTableModel>validationStatus} === 'invalid' ? '#bb0000' : '#e9730c' }"
+								src="sap-icon://rhombus-milestone-2"
+								size="1.25rem" 
+								color="{= ${oTableModel>validationStatus} === 'valid' ? '#3cb371' : ${oTableModel>validationStatus} === 'invalid' ? '#bb0000' : '#f0e68c' }"
 								tooltip="{= ${oTableModel>validationStatus} === 'valid' ? 'Valid' : ${oTableModel>validationStatus} === 'invalid' ? 'Invalid' : 'Pending validation' }">
 							</core:Icon>
-						</t:template>
-					</t:Column>
-
-				</t:columns>
-			</t:Table>
+						</cells>
+					</ColumnListItem>
+				</items>
+			</Table>
 		</VBox>
 
 		<!-- Footer Section -->
