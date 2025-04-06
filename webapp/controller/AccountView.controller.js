@@ -587,16 +587,47 @@ sap.ui.define([
 
         },
 
+        // onDelete: function() {
+        //     var oTable = this.byId("accountTable");
+        //     var aSelectedIndices = oTable.getSelectedIndices();
+        //     var oModel = this.getView().getModel();
+        //     var aItems = oModel.getProperty("/items");
+        
+        //     if (aSelectedIndices.length === 0) {
+        //         sap.m.MessageToast.show("Please select at least one row to delete.");
+        //         return;
+        //     }
+        
+        //     // Create a new array without the selected rows
+        //     var aNewItems = aItems.filter(function(item, index) {
+        //         return aSelectedIndices.indexOf(index) === -1;
+        //     });
+        
+        //     // Update the model
+        //     oModel.setProperty("/items", aNewItems);
+        //     sap.m.MessageToast.show("Selected row(s) deleted.");
+        // },
+
+    
         onDelete: function() {
             var oTable = this.byId("accountTable");
-            var aSelectedIndices = oTable.getSelectedIndices();
-            var oModel = this.getView().getModel();
+            var aSelectedItems = oTable.getSelectedItems();
+            var oModel = this.getView().getModel("oTableModel"); // Make sure we're using the correct model
             var aItems = oModel.getProperty("/items");
         
-            if (aSelectedIndices.length === 0) {
+            if (aSelectedItems.length === 0) {
                 sap.m.MessageToast.show("Please select at least one row to delete.");
                 return;
             }
+        
+            // Get the indices of the selected items
+            var aSelectedIndices = [];
+            aSelectedItems.forEach(function(oSelectedItem) {
+                var iIndex = oTable.indexOfItem(oSelectedItem);
+                if (iIndex !== -1) {
+                    aSelectedIndices.push(iIndex);
+                }
+            });
         
             // Create a new array without the selected rows
             var aNewItems = aItems.filter(function(item, index) {
@@ -605,10 +636,13 @@ sap.ui.define([
         
             // Update the model
             oModel.setProperty("/items", aNewItems);
+            
+            // Clear selections
+            oTable.removeSelections();
+            
             sap.m.MessageToast.show("Selected row(s) deleted.");
         },
 
-    
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
             var aNotifications = oModel.getProperty("/notifications");

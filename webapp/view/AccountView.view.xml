@@ -164,9 +164,9 @@
 							<Input id="txtItemText" value="{oTableModel>txtItemText}" />
 							<!-- Cell 10: Status Icon - Changed to dashed rhombus -->
 							<core:Icon id="statusIcon" 
-								src="sap-icon://rhombus-milestone-2"
+								src="{= ${oTableModel>validationStatus} === 'pending' ? 'sap-icon://status-inactive' : 'sap-icon://rhombus-milestone-2' }"
 								size="1.25rem" 
-								color="{= ${oTableModel>validationStatus} === 'valid' ? '#3cb371' : ${oTableModel>validationStatus} === 'invalid' ? '#bb0000' : '#f0e68c' }"
+								color="{= ${oTableModel>validationStatus} === 'valid' ? '#3cb371' : '#bb0000' }"
 								tooltip="{= ${oTableModel>validationStatus} === 'valid' ? 'Valid' : ${oTableModel>validationStatus} === 'invalid' ? 'Invalid' : 'Pending validation' }">
 							</core:Icon>
 						</cells>
