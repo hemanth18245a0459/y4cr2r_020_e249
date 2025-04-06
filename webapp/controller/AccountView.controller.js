@@ -88,72 +88,6 @@ sap.ui.define([
         // },
 
 
-        // onCompanyCodeValueHelpRequest: function (oEvent) {
-        //     var that = this;
-        //     var oTableModel = this.getView().getModel("oTableModel");
-        //     var aCompanyData = oTableModel.getProperty("/aCompanyCode");
-            
-        //     if (!this._oCompCodeDialog) {
-        //         this._oCompCodeDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.CompanyCodeDialog", this);
-        //         this.getView().addDependent(this._oCompCodeDialog);
-                
-        //         this._oCompCodeDialog.attachSearch(this.onCompanyCodeSearchFilter, this);
-        //         this._oCompCodeDialog.attachLiveChange(this.onCompanyCodeSearchFilter, this);
-        //     }
-            
-        //     if (!aCompanyData || aCompanyData.length === 0) {
-        //         sap.ui.core.BusyIndicator.show(0);
-        //         var oModel = this.getView().getModel("oModel");
-        //         var oParams = {
-        //             $select: "CustomerID,CompanyName"
-        //         };
-                
-        //         oModel.read("/Customers", {
-        //             urlParameters: oParams,
-        //             success: function (oData) {
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 oTableModel.setProperty("/aCompanyCode", oData.results);
-        //                 that._oCompCodeDialog.open();
-        //             },
-        //             error: function (oError) {
-        //                 sap.ui.core.BusyIndicator.hide();
-        //                 console.error("Error reading data:", oError);
-        //                 sap.m.MessageToast.show("Error loading company data");
-        //             }
-        //         });
-        //     } else {
-        //         this._oCompCodeDialog.open();
-        //     }
-        // },
-        
-        // onCompanyCodeSearchFilter: function (oEvent) {
-        //     var sValue = oEvent.getParameter("value") || oEvent.getParameter("newValue") || "";
-        //     var oBinding = oEvent.getSource().getBinding("items");
-            
-        //     if (!sValue) {
-        //         oBinding.filter([]);
-        //     } else {
-        //         var oFilters = [
-        //             new Filter("CustomerID", FilterOperator.Contains, sValue),
-        //             new Filter("CompanyName", FilterOperator.Contains, sValue)
-        //         ];
-                
-        //         oBinding.filter(new Filter({
-        //             filters: oFilters,
-        //             and: false
-        //         }));
-        //     }
-        // },
-
-        // onComapnyCodehandleClose: function(oEvent) {
-        //     var that = this;
-        //     var oSelectedItem = oEvent.getParameter("selectedItem");
-            
-        //     if (oSelectedItem) {
-        //         var sCustomerID = oSelectedItem.getCells()[0].getText();
-        //         this.byId("inputCompanyCode").setValue(sCustomerID);
-        //     }
-        // },
 
         // This single function handles ALL cell clicks in the table
         // onTableCellClick: function(oEvent) {
@@ -432,6 +366,7 @@ sap.ui.define([
 			oInput.setValue(oSelectedItem.getTitle().trim());
         },
 
+        // Show Data button logic starts here
         onShowData: function() {
             var that = this;
             sap.ui.core.BusyIndicator.show(0);
@@ -497,107 +432,9 @@ sap.ui.define([
             var that = this;
             that.odlgCustomerData.close();
         },
+        // Show Data button logic ends here
 
-        // onSimulation: function() {
-        //     var oModel = this.getView().getModel("oTableModel");
-        //     var aItems = oModel.getProperty("/items") || [];
-        //     var bAllValid = true;
-            
-        //     // Validate each row
-        //     aItems.forEach(function(oItem, index) {
-        //         // Check mandatory fields
-        //         if (!oItem.txtCompanyCode || !oItem.txtAmountDocCurr) {
-        //             oItem.validationStatus = "invalid"; // Required fields missing
-        //             bAllValid = false;
-        //         } else {
-        //             oItem.validationStatus = "valid"; // All required fields provided
-        //         }
-                
-        //         // Add more validation as needed
-        //         // For example, check if amount is a valid number
-        //         if (oItem.txtAmountDocCurr && isNaN(parseFloat(oItem.txtAmountDocCurr))) {
-        //             oItem.validationStatus = "invalid";
-        //             bAllValid = false;
-        //         }
-        //     });
-            
-        //     // Update model
-        //     oModel.setProperty("/items", aItems);
-            
-        //     // Show message based on validation result
-        //     if (bAllValid) {
-        //         MessageToast.show("All items validated successfully!");
-        //     } else {
-        //         MessageBox.error("There are validation errors. Please check the items marked in red.");
-        //     }
-        // },
-
-        // onSimulation: function() {
-        //     var oModel = this.getView().getModel("oTableModel");
-        //     var aItems = oModel.getProperty("/items") || [];
-        //     var bAllValid = true;
-        //     var missingFields = {
-        //         companyCode: [],
-        //         amountDocCurr: []
-        //     };
-        //     var rowsWithErrors = 0;
-            
-        //     // Validate each row
-        //     aItems.forEach(function(oItem, index) {
-        //         var rowHasError = false;
-                
-        //         // Check Company Code
-        //         if (!oItem.txtCompanyCode) {
-        //             missingFields.companyCode.push(index + 1); // +1 for human-readable row numbers
-        //             rowHasError = true;
-        //         }
-                
-        //         // Check Amount
-        //         if (!oItem.txtAmountDocCurr) {
-        //             missingFields.amountDocCurr.push(index + 1);
-        //             rowHasError = true;
-        //         } else if (isNaN(parseFloat(oItem.txtAmountDocCurr))) {
-        //             // Valid number check
-        //             missingFields.amountDocCurr.push(index + 1);
-        //             rowHasError = true;
-        //         }
-                
-        //         // Set validation status for this row
-        //         oItem.validationStatus = rowHasError ? "invalid" : "valid";
-                
-        //         // Track overall validation
-        //         if (rowHasError) {
-        //             bAllValid = false;
-        //             rowsWithErrors++;
-        //         }
-        //     });
-            
-        //     // Update model
-        //     oModel.setProperty("/items", aItems);
-            
-        //     // Force binding refresh to ensure UI updates
-        //     this.byId("accountTable").getBinding("rows").refresh();
-            
-        //     // Show appropriate message based on validation results
-        //     if (bAllValid) {
-        //         MessageToast.show("All items validated successfully!");
-        //     } else {
-        //         var errorMessage = "Validation errors found in " + rowsWithErrors + " row(s):\n";
-                
-        //         if (missingFields.companyCode.length > 0) {
-        //             errorMessage += "-> Missing Company Code in rows: " + missingFields.companyCode.join(", ") + "\n";
-        //         }
-                
-        //         if (missingFields.amountDocCurr.length > 0) {
-        //             errorMessage += "-> Missing or invalid Amount Doc.Curr. in rows: " + missingFields.amountDocCurr.join(", ") + "\n";
-        //         }
-                
-        //         errorMessage += "\nPlease fix the items marked in red.";
-                
-        //         MessageBox.error(errorMessage);
-        //     }
-        // },
-
+        // Simulation button logic starts here
         onSimulation: function() {
             var aItems = this.getView().getModel("oTableModel").getProperty("/items");
             let errorRows = [];
@@ -616,55 +453,9 @@ sap.ui.define([
                 MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
             }
         },
+        // Simulation button logic ends here
 
-        // onSimulation: function() {
-        //     const oTable = this.getView().byId("accountTable");
-        //     const oModel = this.getView().getModel("oTableModel");
-        //     const aItems = oModel.getProperty("/items");
-        //     let errorRows = [];
-            
-        //     // Validate each item
-        //     aItems.forEach((oItem, index) => {
-        //         const isValid = oItem.txtCompanyCode && 
-        //                         oItem.txtAmountDocCurr && 
-        //                         !isNaN(oItem.txtAmountDocCurr);
-                
-        //         // Update validation status
-        //         oItem.validationStatus = isValid ? "valid" : "invalid";
-        //         if (!isValid) errorRows.push(index + 1);
-        //     });
-            
-        //     // Update the model to refresh the UI
-        //     oModel.setProperty("/items", aItems);
-            
-        //     // Force the table to update immediately
-        //     oTable.getItems().forEach((oListItem, index) => {
-        //         // Get the icon control in the last cell
-        //         const oIcon = oListItem.getCells()[oListItem.getCells().length - 1];
-                
-        //         // Set icon properties based on validation status
-        //         const status = aItems[index].validationStatus;
-        //         oIcon.setColor(
-        //             status === "valid" ? "#107e3e" : 
-        //             status === "invalid" ? "#bb0000" : 
-        //             "#e9730c"
-        //         );
-                
-        //         oIcon.setTooltip(
-        //             status === "valid" ? "Valid" : 
-        //             status === "invalid" ? "Invalid" : 
-        //             "Pending validation"
-        //         );
-        //     });
-            
-        //     // Show error if any
-        //     if (errorRows.length > 0) {
-        //         MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
-        //     } else {
-        //         MessageBox.success("Simulation completed successfully!");
-        //     }
-        // },
-
+        // Add button logic starts
         onAdd: function () {
             var inputCompanyCode = this.getView().byId("inputCompanyCode").getValue();
             var inputDocumentDate = this.getView().byId("inputDocumentDate").getValue();
@@ -701,189 +492,44 @@ sap.ui.define([
             
 
         },
+        // Add button logic ends
 
-        // onDelete: function() {
-        //     var oTable = this.byId("accountTable");
-        //     var aSelectedIndices = oTable.getSelectedIndices();
-        //     var oModel = this.getView().getModel();
-        //     var aItems = oModel.getProperty("/items");
-        
-        //     if (aSelectedIndices.length === 0) {
-        //         sap.m.MessageToast.show("Please select at least one row to delete.");
-        //         return;
-        //     }
-        
-        //     // Create a new array without the selected rows
-        //     var aNewItems = aItems.filter(function(item, index) {
-        //         return aSelectedIndices.indexOf(index) === -1;
-        //     });
-        
-        //     // Update the model
-        //     oModel.setProperty("/items", aNewItems);
-        //     sap.m.MessageToast.show("Selected row(s) deleted.");
-        // },
-
-        // onUpload: function (oEvent) {
-        //     var oFileUploader = this.byId("fileUploader");
-        //     var oFile = oFileUploader.oFileUpload.files[0]; // Access the selected file
-        
-        //     if (!oFile) {
-        //         MessageToast.show("Please select an Excel file first.");
-        //         return;
-        //     }
-        
-        //     var reader = new FileReader();
-        //     reader.onload = function (e) {
-        //         var data = e.target.result;
-        //         var workbook = XLSX.read(data, { type: "binary" });
-        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
-        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-        
-        //         var oTableModel = this.getView().getModel("oTableModel");
-        //         oTableModel.setProperty("/items", excelData);
-        //         MessageToast.show("File uploaded successfully!");
-        //     }.bind(this);
-        
-        //     reader.onerror = function () {
-        //         MessageToast.show("Error reading the file.");
-        //     };
-        
-        //     reader.readAsBinaryString(oFile);
-        // },
-
-
-        // onUploadPress: function() {
-        //     // This will trigger the hidden file uploader when Upload button is clicked
-        //     // this.byId("fileUploader").openValueStateMessage();\
-        //      // This directly triggers the FileUploader to open
-        //      var oFileUploader = this.byId("fileUploader");
-        //      if (oFileUploader) {
-        //          // This is the correct way to programmatically trigger file selection
-        //          jQuery(oFileUploader.getFocusDomRef()).click();
-        //      }
-        // },
-        
-        // onFileChange: function(oEvent) {
-        //     // This will be called when a file is selected
-        //     var oFile = oEvent.getParameter("files")[0];
-        //     if (!oFile) {
-        //         MessageToast.show("No file selected");
-        //         return;
-        //     }
-            
-        //     this.processExcelFile(oFile);
-        // },
-        
-        // processExcelFile: function(oFile) {
-        //     var reader = new FileReader();
-            
-        //     reader.onload = function(e) {
-        //         var data = e.target.result;
-        //         var workbook = XLSX.read(data, { type: "binary" });
-        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
-        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        // Implement template download function
+        onDownloadTemplate: function() {
+            try {
+                if (typeof XLSX === "undefined") {
+                    MessageToast.show("XLSX library not loaded. Please check your index.html file.");
+                    return;
+                }
                 
-        //         // Map Excel data to your table model structure
-        //         var tableItems = excelData.map(function(item) {
-        //             return {
-        //                 "txtCompanyCode": item["Comp.Code"] || "",
-        //                 "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
-        //                 "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
-        //                 "txtGlAccount": item["G/L account"] || "",
-        //                 "txtVendorPos": item["Vendor pos."] || "",
-        //                 "txtCustomerPos": item["Customer pos."] || "",
-        //                 "txtCostCenter": item["Cost Center"] || "",
-        //                 "txtOrderNumber": item["Order Number"] || "",
-        //                 "txtAssignmentNumber": item["Assignment Number"] || "",
-        //                 "txtItemText": item["Item Text"] || "",
-        //                 "txtProfitCenter": item["Profit Center"] || ""
-        //             };
-        //         });
+                // Create worksheet with headers
+                var ws = XLSX.utils.json_to_sheet([{
+                    "Comp.Code": "",
+                    "Amount Doc.Curr.": "",
+                    "G/L account": "",
+                    "Vendor pos.": "",
+                    "Customer pos.": "",
+                    "Cost Center": "",
+                    "Assignment Number": "",
+                    "Profit Center": "",
+                    "Item Text": ""
+                }]);
                 
-        //         var oModel = this.getView().getModel();
-        //         oModel.setProperty("/items", tableItems);
-        //         MessageToast.show("File uploaded successfully!");
-        //     }.bind(this);
-            
-        //     reader.onerror = function() {
-        //         MessageToast.show("Error reading the file.");
-        //     };
-            
-        //     reader.readAsBinaryString(oFile);
-        // },
+                // Create workbook
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Template");
+                
+                // Generate file and trigger download
+                XLSX.writeFile(wb, "AccountPostingTemplate.xlsx");
+                
+            } catch (error) {
+                console.error("Error generating template:", error);
+                MessageToast.show("Error generating template file. See console for details.");
+            }
+        },
+        // Download Template button logic ends
 
-        // onFileChange: function(oEvent) {
-        //     // This gets called when a file is selected
-        //     var oFile = oEvent.getParameter("files")[0];
-        //     if (!oFile) {
-        //         MessageToast.show("No file selected");
-        //         return;
-        //     }
-            
-        //     this.processExcelFile(oFile);
-        // },
-        
-        // // Process the Excel file
-        // processExcelFile: function(oFile) {
-            
-        //     if (!XLSX) {
-        //         MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-        //         return;
-        //     }
-            
-        //     var reader = new FileReader();
-            
-        //     reader.onload = function(e) {
-        //         try {
-        //             // Use the modern approach instead of readAsBinaryString
-        //             var data = new Uint8Array(e.target.result);
-        //             var workbook = XLSX.read(data, { type: "array" });
-        //             var sheetName = workbook.SheetNames[0]; // Get the first sheet
-        //             var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
-        //             console.log("Excel Data:", excelData);
-        //             if (excelData.length === 0) {
-        //                 MessageToast.show("No data found in the Excel file.");
-        //                 return;
-        //             }
-                    
-        //             // Log the first row to help with debugging
-        //             console.log("First row of Excel data:", excelData[0]);
-                    
-        //             // Map Excel data to your table model structure
-        //             var tableItems = excelData.map(function(item) {
-        //                 return {
-        //                     "txtCompanyCode": item["Comp.Code"] || "",
-        //                     "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
-        //                     "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
-        //                     "txtGlAccount": item["G/L account"] || "",
-        //                     "txtVendorPos": item["Vendor pos."] || "",
-        //                     "txtCustomerPos": item["Customer pos."] || "",
-        //                     "txtCostCenter": item["Cost Center"] || "",
-        //                     "txtOrderNumber": item["Order Number"] || "",
-        //                     "txtAssignmentNumber": item["Assignment Number"] || "",
-        //                     "txtItemText": item["Item Text"] || "",
-        //                     "txtProfitCenter": item["Profit Center"] || ""
-        //                 };
-        //             });
-                    
-        //             var oModel = this.getView().getModel();
-        //             oModel.setProperty("/items", tableItems);
-        //             MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
-        //         } catch (error) {
-        //             console.error("Error processing Excel file:", error);
-        //             MessageToast.show("Error processing the Excel file. See console for details.");
-        //         }
-        //     }.bind(this);
-            
-        //     reader.onerror = function(error) {
-        //         console.error("FileReader error:", error);
-        //         MessageToast.show("Error reading the file.");
-        //     };
-            
-        //     // Using the modern approach instead of readAsBinaryString
-        //     reader.readAsArrayBuffer(oFile);
-        // },
-
+        // upload button logic starts
         onFileChange: function(oEvent) {
             // This gets called when a file is selected
             var oFile = oEvent.getParameter("files")[0];
@@ -970,41 +616,9 @@ sap.ui.define([
             // Read the file as an ArrayBuffer
             reader.readAsArrayBuffer(oFile);
         },
+        // upload button logic ends
         
-        // Implement template download function
-        onDownloadTemplate: function() {
-            try {
-                if (typeof XLSX === "undefined") {
-                    MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-                    return;
-                }
-                
-                // Create worksheet with headers
-                var ws = XLSX.utils.json_to_sheet([{
-                    "Comp.Code": "",
-                    "Amount Doc.Curr.": "",
-                    "G/L account": "",
-                    "Vendor pos.": "",
-                    "Customer pos.": "",
-                    "Cost Center": "",
-                    "Assignment Number": "",
-                    "Profit Center": "",
-                    "Item Text": ""
-                }]);
-                
-                // Create workbook
-                var wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Template");
-                
-                // Generate file and trigger download
-                XLSX.writeFile(wb, "AccountPostingTemplate.xlsx");
-                
-            } catch (error) {
-                console.error("Error generating template:", error);
-                MessageToast.show("Error generating template file. See console for details.");
-            }
-        },
-    
+        // delete button logic starts
         onDelete: function() {
             var oTable = this.byId("accountTable");
             var aSelectedItems = oTable.getSelectedItems();
@@ -1038,6 +652,7 @@ sap.ui.define([
             
             sap.m.MessageToast.show("Selected row(s) deleted.");
         },
+        // delete button logic ends
 
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
