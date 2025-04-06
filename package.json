@@ -28,5 +28,15 @@
     "int-tests": "fiori run --open 'test/integration/opaTests.qunit.html'",
     "start-mock": "fiori run --config ./ui5-mock.yaml --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#y4cr2r020e249-display\""
   },
-  "sapuxLayer": "CUSTOMER_BASE"
+  "sapuxLayer": "CUSTOMER_BASE",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hemanth18245a0459/sap-ui5-UploaderTool.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hemanth18245a0459/sap-ui5-UploaderTool/issues"
+  },
+  "homepage": "https://github.com/hemanth18245a0459/sap-ui5-UploaderTool#readme"
 }
