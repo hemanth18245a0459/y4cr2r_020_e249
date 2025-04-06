@@ -10,7 +10,7 @@ sap.ui.define([
 ], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency, MessageBox) {
     "use strict";
 
-    var XLSX = window.XLSX;
+    // var XLSX = window.XLSX;
 
     return Controller.extend("y4cr2r020e249.controller.AccountView", {
 
@@ -51,7 +51,15 @@ sap.ui.define([
             var oTableModel = new JSONModel(oData);
             this.getView().setModel(oTableModel, "oTableModel");
             console.log("Model set in onInit:", this.getView().getModel("oTableModel").getProperty("/currencies"));
+            
+            // Check if XLSX is globally available
+            if (typeof XLSX === "undefined") {
+                console.error("XLSX library not loaded. Check your index.html file.");
+            };
 
+            // Attach ONE handler to the entire table
+            // var oTable = this.byId("accountTable");
+            // oTable.attachCellClick(this.onTableCellClick, this);
 
             this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
             this._oRouter.attachRouteMatched(this._handleRouteMatched, this);
@@ -80,10 +88,95 @@ sap.ui.define([
         // },
 
 
-        onCompanyCodeValueHelpRequest: function (oEvent) {
+        // onCompanyCodeValueHelpRequest: function (oEvent) {
+        //     var that = this;
+        //     var oTableModel = this.getView().getModel("oTableModel");
+        //     var aCompanyData = oTableModel.getProperty("/aCompanyCode");
+            
+        //     if (!this._oCompCodeDialog) {
+        //         this._oCompCodeDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.CompanyCodeDialog", this);
+        //         this.getView().addDependent(this._oCompCodeDialog);
+                
+        //         this._oCompCodeDialog.attachSearch(this.onCompanyCodeSearchFilter, this);
+        //         this._oCompCodeDialog.attachLiveChange(this.onCompanyCodeSearchFilter, this);
+        //     }
+            
+        //     if (!aCompanyData || aCompanyData.length === 0) {
+        //         sap.ui.core.BusyIndicator.show(0);
+        //         var oModel = this.getView().getModel("oModel");
+        //         var oParams = {
+        //             $select: "CustomerID,CompanyName"
+        //         };
+                
+        //         oModel.read("/Customers", {
+        //             urlParameters: oParams,
+        //             success: function (oData) {
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 oTableModel.setProperty("/aCompanyCode", oData.results);
+        //                 that._oCompCodeDialog.open();
+        //             },
+        //             error: function (oError) {
+        //                 sap.ui.core.BusyIndicator.hide();
+        //                 console.error("Error reading data:", oError);
+        //                 sap.m.MessageToast.show("Error loading company data");
+        //             }
+        //         });
+        //     } else {
+        //         this._oCompCodeDialog.open();
+        //     }
+        // },
+        
+        // onCompanyCodeSearchFilter: function (oEvent) {
+        //     var sValue = oEvent.getParameter("value") || oEvent.getParameter("newValue") || "";
+        //     var oBinding = oEvent.getSource().getBinding("items");
+            
+        //     if (!sValue) {
+        //         oBinding.filter([]);
+        //     } else {
+        //         var oFilters = [
+        //             new Filter("CustomerID", FilterOperator.Contains, sValue),
+        //             new Filter("CompanyName", FilterOperator.Contains, sValue)
+        //         ];
+                
+        //         oBinding.filter(new Filter({
+        //             filters: oFilters,
+        //             and: false
+        //         }));
+        //     }
+        // },
+
+        // onComapnyCodehandleClose: function(oEvent) {
+        //     var that = this;
+        //     var oSelectedItem = oEvent.getParameter("selectedItem");
+            
+        //     if (oSelectedItem) {
+        //         var sCustomerID = oSelectedItem.getCells()[0].getText();
+        //         this.byId("inputCompanyCode").setValue(sCustomerID);
+        //     }
+        // },
+
+        // This single function handles ALL cell clicks in the table
+        // onTableCellClick: function(oEvent) {
+        //     // Get the specific cell that was clicked
+        //     var oCell = oEvent.getParameter("cellControl");
+            
+        //     // Only handle company code cells with valueHelp
+        //     if (oCell && oCell.getId().indexOf("txtCompanyCode") !== -1 && 
+        //         oCell.getShowValueHelp && oCell.getShowValueHelp()) {
+        //         // Handle this specific cell's value help request
+        //         this.onCompanyCodeValueHelpRequest({
+        //             getSource: function() { return oCell; }
+        //         });
+        //     }
+        // },
+
+        onCompanyCodeValueHelpRequest: function(oEvent) {
             var that = this;
             var oTableModel = this.getView().getModel("oTableModel");
             var aCompanyData = oTableModel.getProperty("/aCompanyCode");
+            
+            // Store the source control that triggered the value help
+            this._oValueHelpSource = oEvent.getSource();
             
             if (!this._oCompCodeDialog) {
                 this._oCompCodeDialog = sap.ui.xmlfragment("y4cr2r020e249.fragment.CompanyCodeDialog", this);
@@ -102,12 +195,12 @@ sap.ui.define([
                 
                 oModel.read("/Customers", {
                     urlParameters: oParams,
-                    success: function (oData) {
+                    success: function(oData) {
                         sap.ui.core.BusyIndicator.hide();
                         oTableModel.setProperty("/aCompanyCode", oData.results);
                         that._oCompCodeDialog.open();
                     },
-                    error: function (oError) {
+                    error: function(oError) {
                         sap.ui.core.BusyIndicator.hide();
                         console.error("Error reading data:", oError);
                         sap.m.MessageToast.show("Error loading company data");
@@ -117,7 +210,7 @@ sap.ui.define([
                 this._oCompCodeDialog.open();
             }
         },
-        
+
         onCompanyCodeSearchFilter: function (oEvent) {
             var sValue = oEvent.getParameter("value") || oEvent.getParameter("newValue") || "";
             var oBinding = oEvent.getSource().getBinding("items");
@@ -138,13 +231,37 @@ sap.ui.define([
         },
 
         onComapnyCodehandleClose: function(oEvent) {
-            var that = this;
             var oSelectedItem = oEvent.getParameter("selectedItem");
             
-            if (oSelectedItem) {
+            if (oSelectedItem && this._oValueHelpSource) {
                 var sCustomerID = oSelectedItem.getCells()[0].getText();
-                this.byId("inputCompanyCode").setValue(sCustomerID);
+                
+                // Get the ID of the source control
+                var sSourceId = this._oValueHelpSource.getId();
+                
+                // Check if it's from the form or the table
+                if (sSourceId === this.byId("inputCompanyCode").getId()) {
+                    // It's the form field
+                    this.byId("inputCompanyCode").setValue(sCustomerID);
+                } else {
+                    // It's a table cell - set the value directly on the source control
+                    this._oValueHelpSource.setValue(sCustomerID);
+                    
+                    // Get the binding context to update the model
+                    var oBindingContext = this._oValueHelpSource.getBindingContext("oTableModel");
+                    if (oBindingContext) {
+                        var sPath = oBindingContext.getPath();
+                        var oTableModel = this.getView().getModel("oTableModel");
+                        oTableModel.setProperty(sPath + "/txtCompanyCode", sCustomerID);
+                        
+                        // Optional: Reset validation status to pending
+                        oTableModel.setProperty(sPath + "/validationStatus", "pending");
+                    }
+                }
             }
+            
+            // Clear the source reference
+            this._oValueHelpSource = null;
         },
 
         validateDate: function (oEvent) {
@@ -482,13 +599,12 @@ sap.ui.define([
         // },
 
         onSimulation: function() {
-            const aItems = this.getView().getModel("oTableModel").getProperty("/items");
+            var aItems = this.getView().getModel("oTableModel").getProperty("/items");
             let errorRows = [];
             
             aItems.forEach((oItem, index) => {
-                const isValid = oItem.txtCompanyCode && 
-                                oItem.txtAmountDocCurr && 
-                                !isNaN(oItem.txtAmountDocCurr);
+                // var isValid = oItem.txtCompanyCode &&  oItem.txtAmountDocCurr && !isNaN(oItem.txtAmountDocCurr);
+                var isValid = oItem.txtCompanyCode &&  oItem.txtAmountDocCurr;
                 
                 oItem.validationStatus = isValid ? "valid" : "invalid";
                 if (!isValid) errorRows.push(index + 1);
@@ -556,34 +672,33 @@ sap.ui.define([
             var inputPostingPeriod = this.getView().byId("inputPostingPeriod").getValue();
             var inputFiscalYear = this.getView().byId("inputFiscalYear").getValue();
             var inputCurrency = this.getView().byId("inputCurrency").getValue();
-            var inputHeaderText = this.getView().byId("inputHeaderText").getValue();
-            var inputReference = this.getView().byId("inputReference").getValue();
+            // var inputHeaderText = this.getView().byId("inputHeaderText").getValue();
+            // var inputReference = this.getView().byId("inputReference").getValue();
             
-            // if (inputCompanyCode === "" || inputDocumentDate === "" || inputPostingDate === "" || inputPostingPeriod === "" || inputCurrency === "" || inputFiscalYear === "" || inputHeaderText === "" || inputReference === "") {
+            if (inputCompanyCode === "" || inputDocumentDate === "" || inputPostingDate === "" || inputPostingPeriod === "" || inputCurrency === "" || inputFiscalYear === "") {
 
-            //     MessageBox.error("Please select the mandatory fields");
-            // }
-            // else {
-                
+                MessageBox.error("Please fill the mandatory fields");
+            }
+            else {
+                var obj = {
+                    "txtCompanyCode": inputCompanyCode,
+                    "txtAmountDocCurr": "",
+                    "txtGlAccount": "",
+                    "txtVendorPos": "",
+                    "txtCustomerPos": "",
+                    "txtCostCenter": "",
+                    "txtAssignmentNumber": "",
+                    "txtItemText": "",
+                    "txtProfitCenter": "",
+                    "validationStatus": "pending"
+                };
+    
+                this.getView().getModel("oTableModel").getData().items.unshift(obj);
+                this.getView().getModel("oTableModel").updateBindings();
 
+            }
 
-            // }
-
-            var obj = {
-                "txtCompanyCode": inputCompanyCode,
-                "txtAmountDocCurr": "",
-                "txtGlAccount": "",
-                "txtVendorPos": "",
-                "txtCustomerPos": "",
-                "txtCostCenter": "",
-                "txtAssignmentNumber": "",
-                "txtItemText": "",
-                "txtProfitCenter": "",
-                "validationStatus": "pending"
-            };
-
-            this.getView().getModel("oTableModel").getData().items.unshift(obj);
-            this.getView().getModel("oTableModel").updateBindings();
+            
 
         },
 
@@ -608,11 +723,292 @@ sap.ui.define([
         //     sap.m.MessageToast.show("Selected row(s) deleted.");
         // },
 
+        // onUpload: function (oEvent) {
+        //     var oFileUploader = this.byId("fileUploader");
+        //     var oFile = oFileUploader.oFileUpload.files[0]; // Access the selected file
+        
+        //     if (!oFile) {
+        //         MessageToast.show("Please select an Excel file first.");
+        //         return;
+        //     }
+        
+        //     var reader = new FileReader();
+        //     reader.onload = function (e) {
+        //         var data = e.target.result;
+        //         var workbook = XLSX.read(data, { type: "binary" });
+        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
+        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        
+        //         var oTableModel = this.getView().getModel("oTableModel");
+        //         oTableModel.setProperty("/items", excelData);
+        //         MessageToast.show("File uploaded successfully!");
+        //     }.bind(this);
+        
+        //     reader.onerror = function () {
+        //         MessageToast.show("Error reading the file.");
+        //     };
+        
+        //     reader.readAsBinaryString(oFile);
+        // },
+
+
+        // onUploadPress: function() {
+        //     // This will trigger the hidden file uploader when Upload button is clicked
+        //     // this.byId("fileUploader").openValueStateMessage();\
+        //      // This directly triggers the FileUploader to open
+        //      var oFileUploader = this.byId("fileUploader");
+        //      if (oFileUploader) {
+        //          // This is the correct way to programmatically trigger file selection
+        //          jQuery(oFileUploader.getFocusDomRef()).click();
+        //      }
+        // },
+        
+        // onFileChange: function(oEvent) {
+        //     // This will be called when a file is selected
+        //     var oFile = oEvent.getParameter("files")[0];
+        //     if (!oFile) {
+        //         MessageToast.show("No file selected");
+        //         return;
+        //     }
+            
+        //     this.processExcelFile(oFile);
+        // },
+        
+        // processExcelFile: function(oFile) {
+        //     var reader = new FileReader();
+            
+        //     reader.onload = function(e) {
+        //         var data = e.target.result;
+        //         var workbook = XLSX.read(data, { type: "binary" });
+        //         var sheetName = workbook.SheetNames[0]; // Get the first sheet
+        //         var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+                
+        //         // Map Excel data to your table model structure
+        //         var tableItems = excelData.map(function(item) {
+        //             return {
+        //                 "txtCompanyCode": item["Comp.Code"] || "",
+        //                 "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
+        //                 "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
+        //                 "txtGlAccount": item["G/L account"] || "",
+        //                 "txtVendorPos": item["Vendor pos."] || "",
+        //                 "txtCustomerPos": item["Customer pos."] || "",
+        //                 "txtCostCenter": item["Cost Center"] || "",
+        //                 "txtOrderNumber": item["Order Number"] || "",
+        //                 "txtAssignmentNumber": item["Assignment Number"] || "",
+        //                 "txtItemText": item["Item Text"] || "",
+        //                 "txtProfitCenter": item["Profit Center"] || ""
+        //             };
+        //         });
+                
+        //         var oModel = this.getView().getModel();
+        //         oModel.setProperty("/items", tableItems);
+        //         MessageToast.show("File uploaded successfully!");
+        //     }.bind(this);
+            
+        //     reader.onerror = function() {
+        //         MessageToast.show("Error reading the file.");
+        //     };
+            
+        //     reader.readAsBinaryString(oFile);
+        // },
+
+        // onFileChange: function(oEvent) {
+        //     // This gets called when a file is selected
+        //     var oFile = oEvent.getParameter("files")[0];
+        //     if (!oFile) {
+        //         MessageToast.show("No file selected");
+        //         return;
+        //     }
+            
+        //     this.processExcelFile(oFile);
+        // },
+        
+        // // Process the Excel file
+        // processExcelFile: function(oFile) {
+            
+        //     if (!XLSX) {
+        //         MessageToast.show("XLSX library not loaded. Please check your index.html file.");
+        //         return;
+        //     }
+            
+        //     var reader = new FileReader();
+            
+        //     reader.onload = function(e) {
+        //         try {
+        //             // Use the modern approach instead of readAsBinaryString
+        //             var data = new Uint8Array(e.target.result);
+        //             var workbook = XLSX.read(data, { type: "array" });
+        //             var sheetName = workbook.SheetNames[0]; // Get the first sheet
+        //             var excelData = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheetName]);
+        //             console.log("Excel Data:", excelData);
+        //             if (excelData.length === 0) {
+        //                 MessageToast.show("No data found in the Excel file.");
+        //                 return;
+        //             }
+                    
+        //             // Log the first row to help with debugging
+        //             console.log("First row of Excel data:", excelData[0]);
+                    
+        //             // Map Excel data to your table model structure
+        //             var tableItems = excelData.map(function(item) {
+        //                 return {
+        //                     "txtCompanyCode": item["Comp.Code"] || "",
+        //                     "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
+        //                     "txtAmountLocCurr": item["Amount Loc.Curr."] || "",
+        //                     "txtGlAccount": item["G/L account"] || "",
+        //                     "txtVendorPos": item["Vendor pos."] || "",
+        //                     "txtCustomerPos": item["Customer pos."] || "",
+        //                     "txtCostCenter": item["Cost Center"] || "",
+        //                     "txtOrderNumber": item["Order Number"] || "",
+        //                     "txtAssignmentNumber": item["Assignment Number"] || "",
+        //                     "txtItemText": item["Item Text"] || "",
+        //                     "txtProfitCenter": item["Profit Center"] || ""
+        //                 };
+        //             });
+                    
+        //             var oModel = this.getView().getModel();
+        //             oModel.setProperty("/items", tableItems);
+        //             MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
+        //         } catch (error) {
+        //             console.error("Error processing Excel file:", error);
+        //             MessageToast.show("Error processing the Excel file. See console for details.");
+        //         }
+        //     }.bind(this);
+            
+        //     reader.onerror = function(error) {
+        //         console.error("FileReader error:", error);
+        //         MessageToast.show("Error reading the file.");
+        //     };
+            
+        //     // Using the modern approach instead of readAsBinaryString
+        //     reader.readAsArrayBuffer(oFile);
+        // },
+
+        onFileChange: function(oEvent) {
+            // This gets called when a file is selected
+            var oFile = oEvent.getParameter("files")[0];
+            if (!oFile) {
+                MessageToast.show("No file selected");
+                return;
+            }
+            
+            // Verify file type
+            var sFileType = oFile.type;
+            var sFileName = oFile.name;
+            
+            if (sFileName.indexOf(".xlsx") === -1 && sFileName.indexOf(".xls") === -1) {
+                MessageToast.show("Please upload an Excel file (.xlsx or .xls)");
+                return;
+            }
+            
+            this.processExcelFile(oFile);
+        },
+        
+        processExcelFile: function(oFile) {
+            // Check if XLSX is available
+            if (typeof XLSX === "undefined") {
+                MessageToast.show("XLSX library not loaded. Please check your index.html file.");
+                return;
+            }
+            
+            var that = this;
+            var reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    // Use the modern approach with ArrayBuffer
+                    var data = new Uint8Array(e.target.result);
+                    var workbook = XLSX.read(data, { type: "array" });
+                    var sheetName = workbook.SheetNames[0]; // Get the first sheet
+                    var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+                    
+                    console.log("Excel Data:", excelData);
+                    if (excelData.length === 0) {
+                        MessageToast.show("No data found in the Excel file.");
+                        return;
+                    }
+                    
+                    // Log the first row to help with debugging
+                    console.log("First row of Excel data:", excelData[0]);
+                    
+                    // Map Excel data to your table model structure
+                    var tableItems = excelData.map(function(item) {
+                        return {
+                            "txtCompanyCode": item["Comp.Code"] || "",
+                            "txtAmountDocCurr": item["Amount Doc.Curr."] || "",
+                            "txtGlAccount": item["G/L account"] || "",
+                            "txtVendorPos": item["Vendor pos."] || "",
+                            "txtCustomerPos": item["Customer pos."] || "",
+                            "txtCostCenter": item["Cost Center"] || "",
+                            "txtAssignmentNumber": item["Assignment Number"] || "",
+                            "txtProfitCenter": item["Profit Center"] || "",
+                            "txtItemText": item["Item Text"] || "",
+                            "validationStatus": "pending" // Set initial validation status
+                        };
+                    });
+                    
+                    // Get the table model and update it
+                    var oTableModel = that.getView().getModel("oTableModel");
+                    oTableModel.setProperty("/items", tableItems);
+                    
+                    // Update the table title
+                    that.getView().byId("tableTitle").setText("Items (" + tableItems.length + ")");
+                    
+                    MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
+                    
+                } catch (error) {
+                    console.error("Error processing Excel file:", error);
+                    MessageToast.show("Error processing the Excel file. See console for details.");
+                }
+            };
+            
+            reader.onerror = function(error) {
+                console.error("FileReader error:", error);
+                MessageToast.show("Error reading the file.");
+            };
+            
+            // Read the file as an ArrayBuffer
+            reader.readAsArrayBuffer(oFile);
+        },
+        
+        // Implement template download function
+        onDownloadTemplate: function() {
+            try {
+                if (typeof XLSX === "undefined") {
+                    MessageToast.show("XLSX library not loaded. Please check your index.html file.");
+                    return;
+                }
+                
+                // Create worksheet with headers
+                var ws = XLSX.utils.json_to_sheet([{
+                    "Comp.Code": "",
+                    "Amount Doc.Curr.": "",
+                    "G/L account": "",
+                    "Vendor pos.": "",
+                    "Customer pos.": "",
+                    "Cost Center": "",
+                    "Assignment Number": "",
+                    "Profit Center": "",
+                    "Item Text": ""
+                }]);
+                
+                // Create workbook
+                var wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Template");
+                
+                // Generate file and trigger download
+                XLSX.writeFile(wb, "AccountPostingTemplate.xlsx");
+                
+            } catch (error) {
+                console.error("Error generating template:", error);
+                MessageToast.show("Error generating template file. See console for details.");
+            }
+        },
     
         onDelete: function() {
             var oTable = this.byId("accountTable");
             var aSelectedItems = oTable.getSelectedItems();
-            var oModel = this.getView().getModel("oTableModel"); // Make sure we're using the correct model
+            var oModel = this.getView().getModel("oTableModel");
             var aItems = oModel.getProperty("/items");
         
             if (aSelectedItems.length === 0) {
