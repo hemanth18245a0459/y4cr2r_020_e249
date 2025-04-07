@@ -154,7 +154,8 @@
                 </Table>
 
                 <!-- Suppliers Table - Initially Hidden -->
-                <Table id="tblSuppliers" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 's' }" items="{oTableModel>/Suppliers}">
+                <!-- <Table id="tblSuppliers" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 's' }" items="{oTableModel>/Suppliers}"> -->
+                <Table id="tblSuppliers" inset="false" alternateRowColors="true" class="sapUISizeCompact" visible="{= ${oTableModel>/tableKey} === 'Suppliers' }" items="{oTableModel>/Suppliers}">
                     <columns>
                         <Column id="colSupplierID" minScreenWidth="Tablet" demandPopin="true">
                             <Text id="lblSupplierID" text="Supplier ID" />

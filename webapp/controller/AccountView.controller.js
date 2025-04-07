@@ -418,9 +418,16 @@ sap.ui.define([
             this.onPress("/Employees", "e");
         },
 
+        // onSuppliersPress: function () {
+        //     // this.onPress("/Suppliers", "Suppliers", "s");
+        //     this.onPress("/Suppliers", "s");
+        // },
+
         onSuppliersPress: function () {
-            // this.onPress("/Suppliers", "Suppliers", "s");
-            this.onPress("/Suppliers", "s");
+            // Get the ID of the Suppliers button from the fragment
+            // var sSuppliersButtonId = sap.ui.getCore().byId("btnSuppliers").getId();
+            var sSuppliersButtonId = sap.ui.getCore().byId("btnSuppliers").getText();
+            this.onPress("/Suppliers", sSuppliersButtonId);
         },
 
         onCloseDialog: function() {

@@ -1,8 +1,8 @@
 /* Enter your custom styles here */
-.customForm {
+/*.customForm {
     margin: 0;
     padding: 0;
-}
+}*/
 .customBorder {
     border: 2px solid #ccc; 
     border-radius: 10px;
@@ -21,21 +21,21 @@
 }
 
 
-:root {
+/*:root {
     --sapButton_Success_Background: rgba(4, 167, 4, 0.59);
     --sapButton_Emphasized_Background: rgba(37, 73, 231, 0.751);
     --sapButton_Attention_Background: rgba(255, 197, 90, 0.189);
-}
+}*/
 
-/* Remove column separators */
+/* Remove column separators
 .noColumnBorders .sapUiTableCell,
 .noColumnBorders .sapUiTableHeaderCell,
 .noColumnBorders .sapUiTableTr > td,
 .noColumnBorders .sapUiTableCellInner {
     border-right: none !important;
-}
+}*?
 
-/* Remove the table's right border */
+/* Remove the table's right border
 .noColumnBorders .sapUiTableCtrl {
     border-right: none !important;
-}
+}*/
