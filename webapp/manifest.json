@@ -101,12 +101,23 @@
           "target": [
             "TargetAccountView"
           ]
+        },
+        {
+          "name": "AccountView2",
+          "pattern": "AccountView2",
+          "target": [
+            "AccountView2"
+          ]
         }
       ],
       "targets": {
         "TargetAccountView": {
           "id": "AccountView",
           "name": "AccountView"
+        },
+        "AccountView2": {
+          "id": "AccountView2",
+          "name": "AccountView2"
         }
       }
     },

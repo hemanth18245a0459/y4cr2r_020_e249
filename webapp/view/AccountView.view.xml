@@ -51,7 +51,7 @@
 					<Input id="inputReference" value="" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />
 				</f:content>
 			</f:SimpleForm>
-
+			
 			<!-- Table Section -->
 			<Table id="accountTable" 
 				class="sapUiSmallMarginTop" 
@@ -66,10 +66,11 @@
 					<OverflowToolbar id="tableToolbar">
 						<Title id="tableTitle" text="{= 'Items (' + ${oTableModel>/items}.length + ')' }" />
 						<ToolbarSpacer />
-						<Button id="btnShowData" type="Ghost" text="Show Data" press="onShowData" />
+						
+						<Button id="btnView2" type="Ghost" text="Next Page" press="onView2" />
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
 						<u:FileUploader id="fileUploader" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" iconOnly="false" buttonOnly="true" style="Emphasized" change="onFileChange" tooltip="Upload Excel File" />
-						<!-- <Button id="btnUpload" type="Ghost" icon="sap-icon://upload" text="Upload" press="onUploadPress" /> -->
+						
 						<Button id="btnSimulation" type="Success" icon="sap-icon://validate" text="Simulation" press="onSimulation" />
 						<Button id="btnPost" type="Attention" icon="sap-icon://repost" text="Post" press="onPost" class="myAttentionBtn" />
 						<Button id="btnAdd" type="Emphasized" icon="sap-icon://add" text="Add" press="onAdd" />
@@ -80,61 +81,73 @@
 
 				<columns>
 					<!-- Column 1: Comp.Code -->
-					<Column id="colCompanyCode" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colCompanyCode" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblCompanyCode" required="true" text="Comp.Code" />
 						</header>
 					</Column>
 					<!-- Column 2: Ammount Doc.Curr. -->
-					<Column id="colAmountDocCurr" width="10rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colAmountDocCurr" width="10rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblAmountDocCurr" required="true" text="Amount Doc.Curr." />
 						</header>
 					</Column>
 					<!-- Column 3: G/L account -->
-					<Column id="colGlAccount" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colGlAccount" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblGlAccount" text="G/L account" />
 						</header>
 					</Column>
 					<!-- Column 4: Vendor pos. -->
-					<Column id="colVendorPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colVendorPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblVendorPos" text="Vendor pos." />
 						</header>
 					</Column>
 					<!-- Column 5: Customer pos. -->
-					<Column id="colCustomerPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colCustomerPos" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblCustomerPos" text="Customer pos." />
 						</header>
 					</Column>
 					<!-- Column 6: Cost Center -->
-					<Column id="colCostCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colCostCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblCostCenter" text="Cost Center" />
 						</header>
 					</Column>
 					<!-- Column 7: Assignment Number -->
-					<Column id="colAssignmentNumber" width="11rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colAssignmentNumber" width="11rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblAssignmentNumber" text="Assignment Number" />
 						</header>
 					</Column>
 					<!-- Column 8: Profit Center -->
-					<Column id="colProfitCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colProfitCenter" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblProfitCenter" text="Profit Center" />
 						</header>
 					</Column>
 					<!-- Column 9: Item Text -->
-					<Column id="colItemText" width="12.5rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true">
+					<Column id="colItemText" width="12.5rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblItemText" text="Item Text" />
 						</header>
 					</Column>
-					<!-- Column 10: Status Icon -->
-					<Column id="colStatus" width="4rem" hAlign="Center" popinDisplay="Inline" demandPopin="true">
+					<!-- Column 10: Order Number -->
+					<Column id="colOrderNumber" width="8rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
+						<header>
+							<Label id="lblOrderNumber" text="Order Number" />
+						</header>
+					</Column>
+					<!-- Column 11: Amount Loc.Curr. -->
+					<Column id="colAmountLocCurr" width="10rem" hAlign="Begin" popinDisplay="Inline" demandPopin="true" visible="false">
+						<header>
+							<Label id="lblAmountLocCurr" text="Amount Loc.Curr." />
+						</header>
+					</Column>
+					<!-- Column 12: Status Icon -->
+					<Column id="colStatus" width="4rem" hAlign="Center" popinDisplay="Inline" demandPopin="true" visible="false">
 						<header>
 							<Label id="lblStatus" text="" />
 						</header>
@@ -162,7 +175,11 @@
 							<Input id="txtProfitCenter" value="{oTableModel>txtProfitCenter}" />
 							<!-- Cell 9: Item Text -->
 							<Input id="txtItemText" value="{oTableModel>txtItemText}" />
-							<!-- Cell 10: Status Icon - Changed to dashed rhombus -->
+							<!-- Cell 10: Order Number -->
+							<Input id="txtOrderNumber" value="{oTableModel>txtOrderNumber}" />
+							<!-- Cell 11: Amount Loc.Curr. -->
+							<Input id="txtAmountLocCurr" value="{oTableModel>txtAmountLocCurr}" />
+							<!-- Cell 12: Status Icon -->
 							<core:Icon id="statusIcon" 
 								src="{= ${oTableModel>validationStatus} === 'pending' ? 'sap-icon://status-inactive' : 'sap-icon://rhombus-milestone-2' }"
 								size="1.25rem" 
