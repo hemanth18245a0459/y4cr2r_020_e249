@@ -31,12 +31,12 @@
   "sapuxLayer": "CUSTOMER_BASE",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hemanth18245a0459/sap-ui5-UploaderTool.git"
+    "url": "git+https://github.com/hemanth18245a0459/y4cr2r_020_e249.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/hemanth18245a0459/sap-ui5-UploaderTool/issues"
+    "url": "https://github.com/hemanth18245a0459/y4cr2r_020_e249/issues"
   },
-  "homepage": "https://github.com/hemanth18245a0459/sap-ui5-UploaderTool#readme"
+  "homepage": "https://github.com/hemanth18245a0459/y4cr2r_020_e249#readme"
 }
