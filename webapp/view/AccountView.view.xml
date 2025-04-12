@@ -66,7 +66,7 @@
 					<OverflowToolbar id="tableToolbar">
 						<Title id="tableTitle" text="{= 'Items (' + ${oTableModel>/items}.length + ')' }" />
 						<ToolbarSpacer />
-						<Button id="btnShowData" type="Ghost" text="Show Data" press="onShowData" />
+						
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
 						<u:FileUploader id="fileUploader" fileType="xlsx" buttonText="Upload" icon="sap-icon://upload" iconOnly="false" buttonOnly="true" style="Emphasized" change="onFileChange" tooltip="Upload Excel File" />
 						<!-- <Button id="btnUpload" type="Ghost" icon="sap-icon://upload" text="Upload" press="onUploadPress" /> -->
