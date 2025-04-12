@@ -63,68 +63,6 @@ sap.ui.define([
 
             this._oRouter = sap.ui.core.UIComponent.getRouterFor(this);
             this._oRouter.attachRouteMatched(this._handleRouteMatched, this);
-            // Define the mapping between Excel column names and model property names
-            this.columnMapping = {
-                "Comp.Code": "txtCompanyCode",
-                "Company Code": "txtCompanyCode",
-                "companyCode": "txtCompanyCode",
-                
-                "Amount Doc.Curr.": "txtAmountDocCurr",
-                "Amount": "txtAmountDocCurr",
-                "amountDocCurr": "txtAmountDocCurr",
-                
-                "G/L account": "txtGlAccount",
-                "GL Account": "txtGlAccount",
-                "glAccount": "txtGlAccount",
-                
-                "Vendor pos.": "txtVendorPos",
-                "Vendor": "txtVendorPos",
-                "vendorPos": "txtVendorPos",
-                
-                "Customer pos.": "txtCustomerPos",
-                "Customer": "txtCustomerPos",
-                "customerPos": "txtCustomerPos",
-                
-                "Cost Center": "txtCostCenter",
-                "costCenter": "txtCostCenter",
-                
-                "Assignment Number": "txtAssignmentNumber",
-                "Assignment": "txtAssignmentNumber",
-                "assignmentNumber": "txtAssignmentNumber",
-                
-                "Profit Center": "txtProfitCenter",
-                "profitCenter": "txtProfitCenter",
-                
-                "Item Text": "txtItemText",
-                "Text": "txtItemText",
-                "itemText": "txtItemText",
-                
-                "Order Number": "txtOrderNumber",
-                "Order": "txtOrderNumber",
-                "orderNumber": "txtOrderNumber",
-                
-                "Amount Loc.Curr.": "txtAmountLocCurr",
-                "Local Amount": "txtAmountLocCurr",
-                "amountLocCurr": "txtAmountLocCurr"
-            };
-            
-            // Define the column IDs in the view that correspond to model properties
-            this.columnIdMapping = {
-                "txtCompanyCode": "colCompanyCode",
-                "txtAmountDocCurr": "colAmountDocCurr",
-                "txtGlAccount": "colGlAccount",
-                "txtVendorPos": "colVendorPos",
-                "txtCustomerPos": "colCustomerPos",
-                "txtCostCenter": "colCostCenter",
-                "txtAssignmentNumber": "colAssignmentNumber",
-                "txtProfitCenter": "colProfitCenter",
-                "txtItemText": "colItemText",
-                "txtOrderNumber": "colOrderNumber",
-                "txtAmountLocCurr": "colAmountLocCurr"
-            };
-            
-            // Always show status column
-            this.byId("colStatus").setVisible(true);
         },
 
         _handleRouteMatched: function (oEvent) {
@@ -133,27 +71,21 @@ sap.ui.define([
             var oParameters = oEvent.getParameters();
             if (oParameters.name === 'RouteAccountView') {
                 this.onReadData();
-                this._resetTableColumnsVisibility();
 
             }
         },
 
-        onReadData: function () {
-            var oModel = this.getView().getModel("oModel");
-            oModel.read("/Customers", {
-                success: function (oData, response) {
-                    console.log("Customers data:", oData);
-                },
-                error: function (oError) {
-                    console.error("Error reading data:", oError);
-                }
-            });
-        },
-
-        onView2: function (oEvent) {
-            var that = this;
-            this._oRouter.navTo("AccountView2");
-        },
+        // onReadData: function () {
+        //     var oModel = this.getView().getModel("oModel");
+        //     oModel.read("/Customers", {
+        //         success: function (oData, response) {
+        //             console.log("Customers data:", oData);
+        //         },
+        //         error: function (oError) {
+        //             console.error("Error reading data:", oError);
+        //         }
+        //     });
+        // },
 
 
 
@@ -433,7 +365,82 @@ sap.ui.define([
 			}
 			oInput.setValue(oSelectedItem.getTitle().trim());
         },
-/*
+
+        // Show Data button logic starts here
+        onShowData: function() {
+            var that = this;
+            sap.ui.core.BusyIndicator.show(0);
+            
+            if (!that.odlgCustomerData) {
+                that.odlgCustomerData = sap.ui.xmlfragment("y4cr2r020e249.fragment.ShowTableData", that);
+                that.getView().addDependent(that.odlgCustomerData);
+            }
+            
+            var oModel = this.getView().getModel();
+            oModel.setProperty("/tableKey", "");
+            
+            sap.ui.core.BusyIndicator.hide();
+            that.odlgCustomerData.open();
+        },
+        onPress: function (sPath, tableKey) {  // Add tableKey parameter
+            var that = this;
+            var oModel = this.getView().getModel("oModel");
+            var oTableModel = this.getView().getModel("oTableModel");
+
+            sap.ui.core.BusyIndicator.show(0);
+
+            oModel.read(sPath, {
+                success: function (oData) {
+                    sap.ui.core.BusyIndicator.hide();
+                    oTableModel.setProperty(sPath, oData.results);
+
+                    // Set the tableKey property to control visibility
+                    oTableModel.setProperty("/tableKey", tableKey);
+                },
+                error: function (oError) {
+                    sap.ui.core.BusyIndicator.hide();
+                    console.error("Error reading data:", oError);
+                }
+            });
+        },
+
+        onCustomersPress: function (oEvent) {
+            var that = this;
+            var oButton = oEvent.getSource();
+            var oView = this.getView();
+            that.customerID = oButton.getId();
+            // id = oView.getId();
+            this.onPress("/Customers", "c");
+        },
+
+        onEmployeesPress: function () {
+            // this.onPress("/Employees", "Employees", "e");
+            this.onPress("/Employees", "e");
+        },
+
+        // onSuppliersPress: function () {
+        //     // this.onPress("/Suppliers", "Suppliers", "s");
+        //     this.onPress("/Suppliers", "s");
+        // },
+
+        onSuppliersPress: function () {
+            // Get the ID of the Suppliers button from the fragment
+            // var sSuppliersButtonId = sap.ui.getCore().byId("btnSuppliers").getId();
+            var sSuppliersButtonId = sap.ui.getCore().byId("btnSuppliers").getText();
+            this.onPress("/Suppliers", sSuppliersButtonId);
+        },
+
+        onCloseDialog: function() {
+            var that = this;
+            that.odlgCustomerData.close();
+        },
+
+        onCancelShowTableDialog: function () {
+            var that = this;
+            that.odlgCustomerData.close();
+        },
+        // Show Data button logic ends here
+
         // Simulation button logic starts here
         onSimulation: function() {
             var aItems = this.getView().getModel("oTableModel").getProperty("/items");
@@ -652,663 +659,7 @@ sap.ui.define([
             
             sap.m.MessageToast.show("Selected row(s) deleted.");
         },
-        
         // delete button logic ends
-*/
-        
-
-/*// Helper method to reset all table columns to invisible
-        _resetTableColumnsVisibility: function() {
-            for (var property in this.columnIdMapping) {
-                var columnId = this.columnIdMapping[property];
-                var oColumn = this.byId(columnId);
-                if (oColumn) {
-                    oColumn.setVisible(false);
-                }
-            }
-            // Always show status column
-            this.byId("colStatus").setVisible(true);
-        },
-        
-        // Helper method to show only columns that match Excel data
-        _showRelevantColumns: function(excelHeaders) {
-            // First reset all columns
-            this._resetTableColumnsVisibility();
-            
-            // Track which model properties we need
-            var usedProperties = [];
-            
-            // Map Excel headers to model properties and collect used properties
-            excelHeaders.forEach(function(header) {
-                var modelProperty = this.columnMapping[header];
-                if (modelProperty) {
-                    usedProperties.push(modelProperty);
-                }
-            }, this);
-            
-            // Make columns visible for used properties
-            usedProperties.forEach(function(property) {
-                var columnId = this.columnIdMapping[property];
-                if (columnId) {
-                    var oColumn = this.byId(columnId);
-                    if (oColumn) {
-                        oColumn.setVisible(true);
-                    }
-                }
-            }, this);
-            
-            // Always show status column
-            this.byId("colStatus").setVisible(true);
-        },
-        // // Helper method to show only columns that match Excel data
-        // _showRelevantColumns: function(excelHeaders) {
-        //     // First reset all columns to invisible
-        //     this._resetTableColumnsVisibility();
-            
-        //     // Loop through Excel headers and make corresponding columns visible
-        //     excelHeaders.forEach(function(header) {
-        //         var modelProperty = this.columnMapping[header];
-        //         if (modelProperty) {
-        //             var columnId = this.columnIdMapping[modelProperty];
-        //             if (columnId) {
-        //                 var oColumn = this.byId(columnId);
-        //                 if (oColumn) {
-        //                     oColumn.setVisible(true);
-        //                 }
-        //             }
-        //         }
-        //     }, this);
-            
-        //     // Always show status column
-        //     this.byId("colStatus").setVisible(true);
-        // },
-
-        // Simulation button logic 
-        onSimulation: function() {
-            var aItems = this.getView().getModel("oTableModel").getProperty("/items");
-            let errorRows = [];
-            
-            aItems.forEach((oItem, index) => {
-                // var isValid = oItem.txtCompanyCode &&  oItem.txtAmountDocCurr && !isNaN(oItem.txtAmountDocCurr);
-                var isValid = oItem.txtCompanyCode &&  oItem.txtAmountDocCurr;
-                
-                oItem.validationStatus = isValid ? "valid" : "invalid";
-                if (!isValid) errorRows.push(index + 1);
-            });
-            
-            this.getView().getModel("oTableModel").refresh();
-            
-            if (errorRows.length > 0) {
-                MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
-            }
-        },
-
-        // Add button logic
-        onAdd: function () {
-            // Create empty object with properties for all columns
-            var obj = {
-                "txtCompanyCode": "",
-                "txtAmountDocCurr": "",
-                "txtGlAccount": "",
-                "txtVendorPos": "",
-                "txtCustomerPos": "",
-                "txtCostCenter": "",
-                "txtAssignmentNumber": "",
-                "txtProfitCenter": "",
-                "txtItemText": "",
-                "txtOrderNumber": "",
-                "txtAmountLocCurr": "",
-                "validationStatus": "pending"
-            };
-
-            this.getView().getModel("oTableModel").getData().items.unshift(obj);
-            this.getView().getModel("oTableModel").updateBindings();
-        },
-
-        // Implement template download function
-        onDownloadTemplate: function() {
-            try {
-                if (typeof XLSX === "undefined") {
-                    MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-                    return;
-                }
-                
-                // Create worksheet with headers
-                var ws = XLSX.utils.json_to_sheet([{
-                    "Comp.Code": "",
-                    "Amount Doc.Curr.": "",
-                    "G/L account": "",
-                    "Vendor pos.": "",
-                    "Customer pos.": "",
-                    "Cost Center": "",
-                    "Assignment Number": "",
-                    "Profit Center": "",
-                    "Item Text": "",
-                    "Order Number": "",
-                    "Amount Loc.Curr.": ""
-                }]);
-                
-                // Create workbook
-                var wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Template");
-                
-                // Generate file and trigger download
-                XLSX.writeFile(wb, "AccountPostingTemplate.xlsx");
-                
-            } catch (error) {
-                console.error("Error generating template:", error);
-                MessageToast.show("Error generating template file. See console for details.");
-            }
-        },
-
-        // Upload file change handler
-        onFileChange: function(oEvent) {
-            // This gets called when a file is selected
-            var oFile = oEvent.getParameter("files")[0];
-            if (!oFile) {
-                MessageToast.show("No file selected");
-                return;
-            }
-            
-            // Verify file type
-            var sFileType = oFile.type;
-            var sFileName = oFile.name;
-            
-            if (sFileName.indexOf(".xlsx") === -1 && sFileName.indexOf(".xls") === -1) {
-                MessageToast.show("Please upload an Excel file (.xlsx or .xls)");
-                return;
-            }
-            
-            this.processExcelFile(oFile);
-        },
-        
-        processExcelFile: function(oFile) {
-            // Check if XLSX is available
-            if (typeof XLSX === "undefined") {
-                MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-                return;
-            }
-            
-            var that = this;
-            var reader = new FileReader();
-            
-            reader.onload = function(e) {
-                try {
-                    // Use the modern approach with ArrayBuffer
-                    var data = new Uint8Array(e.target.result);
-                    var workbook = XLSX.read(data, { type: "array" });
-                    var sheetName = workbook.SheetNames[0]; // Get the first sheet
-                    
-                    // First get the data with headers to identify column names
-                    var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                    
-                    if (excelData.length === 0) {
-                        MessageToast.show("No data found in the Excel file.");
-                        return;
-                    }
-                    
-                    console.log(excelData);
-                    console.log("First row of Excel data:", excelData[0]);
-                    
-                    // Extract headers from the first object's keys
-                    var headers = Object.keys(excelData[0]);
-                    
-                    // Show only columns that match Excel headers
-                    that._showRelevantColumns(headers);
-                    
-                    // Map Excel data to model properties based on headers
-                    var tableItems = excelData.map(function(row) {
-                        var item = {
-                            "validationStatus": "pending" // Default status
-                        };
-                        
-                        // Initialize all properties as empty strings
-                        for (var prop in that.columnIdMapping) {
-                            item[prop] = "";
-                        }
-                        
-                        // Map Excel values to corresponding model properties
-                        headers.forEach(function(header) {
-                            var modelProp = that.columnMapping[header];
-                            
-                            if (modelProp && row[header] !== undefined) {
-                                item[modelProp] = row[header].toString();
-                            }
-                        });
-                        
-                        return item;
-                    });
-                    
-                    // Get the table model and update it
-                    var oTableModel = that.getView().getModel("oTableModel");
-                    oTableModel.setProperty("/items", tableItems);
-                    
-                    // Update the table title if element exists
-                    var oTitle = that.getView().byId("tableTitle");
-                    if (oTitle) {
-                        oTitle.setText("Items (" + tableItems.length + ")");
-                    }
-                    
-                    MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
-                    
-                } catch (error) {
-                    console.error("Error processing Excel file:", error);
-                    MessageToast.show("Error processing the Excel file. See console for details.");
-                }
-            };
-            
-            reader.onerror = function(error) {
-                console.error("FileReader error:", error);
-                MessageToast.show("Error reading the file.");
-            };
-            
-            // Read the file as an ArrayBuffer
-            reader.readAsArrayBuffer(oFile);
-        },
-        
-        // Delete button logic
-        onDelete: function() {
-            var oTable = this.byId("accountTable");
-            var aSelectedItems = oTable.getSelectedItems();
-            var oModel = this.getView().getModel("oTableModel");
-            var aItems = oModel.getProperty("/items");
-        
-            if (aSelectedItems.length === 0) {
-                sap.m.MessageToast.show("Please select at least one row to delete.");
-                return;
-            }
-        
-            // Get the indices of the selected items
-            var aSelectedIndices = [];
-            aSelectedItems.forEach(function(oSelectedItem) {
-                var iIndex = oTable.indexOfItem(oSelectedItem);
-                if (iIndex !== -1) {
-                    aSelectedIndices.push(iIndex);
-                }
-            });
-        
-            // Create a new array without the selected rows
-            var aNewItems = aItems.filter(function(item, index) {
-                return aSelectedIndices.indexOf(index) === -1;
-            });
-        
-            // Update the model
-            oModel.setProperty("/items", aNewItems);
-            
-            // Clear selections
-            oTable.removeSelections();
-            
-            sap.m.MessageToast.show("Selected row(s) deleted.");
-        },
-        
-        // Clear filters logic
-        onClearFilters: function() {
-            // Implementation for clearing filters if needed
-            MessageToast.show("Filters cleared");
-        },
-        
-        // Post logic placeholder
-        onPost: function() {
-            // Implementation for posting data
-            MessageToast.show("Post action triggered");
-        },
-        
-        // Handle navigation to detail view
-        onRowPress: function(oEvent) {
-            var oItem = oEvent.getSource();
-            var oContext = oItem.getBindingContext("oTableModel");
-            var path = oContext.getPath();
-            var index = path.split("/")[2];
-            
-            // Navigate to detail view if needed
-            // this._oRouter.navTo("RouteDetailView", {
-            //     TableIndex: index
-            // });
-            
-            MessageToast.show("Row " + (parseInt(index) + 1) + " selected");
-        },
-        */
-       // Helper method to reset all table columns to invisible
-       _resetTableColumnsVisibility: function() {
-        for (var property in this.columnIdMapping) {
-            var columnId = this.columnIdMapping[property];
-            var oColumn = this.byId(columnId);
-            if (oColumn) {
-                oColumn.setVisible(false);
-            }
-        }
-        // Always show status column
-        var statusColumn = this.byId("colStatus");
-        if (statusColumn) {
-            statusColumn.setVisible(true);
-        }
-    },
-    
-    // Log column visibility for debugging
-    _logColumnVisibility: function() {
-        console.log("--- Column Visibility Status ---");
-        for (var property in this.columnIdMapping) {
-            var columnId = this.columnIdMapping[property];
-            var oColumn = this.byId(columnId);
-            if (oColumn) {
-                console.log(columnId + " visibility: " + oColumn.getVisible());
-            } else {
-                console.log(columnId + " not found");
-            }
-        }
-        
-        // Also check status column
-        var statusColumn = this.byId("colStatus");
-        if (statusColumn) {
-            console.log("Status column visibility: " + statusColumn.getVisible());
-        } else {
-            console.log("Status column not found");
-        }
-    },
-    
-    // Helper method to show only columns that match Excel data
-    _showRelevantColumns: function(excelHeaders) {
-        // First reset all columns to invisible
-        this._resetTableColumnsVisibility();
-        
-        console.log("Excel headers to map:", excelHeaders);
-        console.log("Column mapping:", this.columnMapping);
-        
-        // Track which columns have been made visible
-        var visibleColumns = [];
-        
-        // Loop through Excel headers and make corresponding columns visible
-        excelHeaders.forEach(function(header) {
-            var modelProperty = this.columnMapping[header];
-            console.log("Header:", header, "maps to property:", modelProperty);
-            
-            if (modelProperty) {
-                var columnId = this.columnIdMapping[modelProperty];
-                if (columnId) {
-                    var oColumn = this.byId(columnId);
-                    if (oColumn) {
-                        oColumn.setVisible(true);
-                        visibleColumns.push(columnId);
-                        console.log("Made column visible:", columnId);
-                    } else {
-                        console.error("Column not found:", columnId);
-                    }
-                } else {
-                    console.error("No column mapping for property:", modelProperty);
-                }
-            } else {
-                console.warn("No property mapping for header:", header);
-            }
-        }, this);
-        
-        // If no columns were made visible, show all columns (as a fallback)
-        if (visibleColumns.length === 0) {
-            console.warn("No columns mapped! Showing all columns as fallback.");
-            for (var property in this.columnIdMapping) {
-                var columnId = this.columnIdMapping[property];
-                var oColumn = this.byId(columnId);
-                if (oColumn) {
-                    oColumn.setVisible(true);
-                }
-            }
-        }
-        
-        // Always show status column
-        var statusColumn = this.byId("colStatus");
-        if (statusColumn) {
-            statusColumn.setVisible(true);
-        }
-        
-        // Log the final column visibility state
-        this._logColumnVisibility();
-    },
-
-    // Simulation button logic 
-    onSimulation: function() {
-        var aItems = this.getView().getModel("oTableModel").getProperty("/items");
-        let errorRows = [];
-        
-        aItems.forEach((oItem, index) => {
-            var isValid = oItem.txtCompanyCode && oItem.txtAmountDocCurr;
-            
-            oItem.validationStatus = isValid ? "valid" : "invalid";
-            if (!isValid) errorRows.push(index + 1);
-        });
-        
-        this.getView().getModel("oTableModel").refresh();
-        
-        if (errorRows.length > 0) {
-            MessageBox.error(`Missing mandatory fields in rows: ${errorRows.join(", ")}`);
-        }
-    },
-
-    // Add button logic
-    onAdd: function () {
-        // Create empty object with properties for all columns
-        var obj = {
-            "txtCompanyCode": "",
-            "txtAmountDocCurr": "",
-            "txtGlAccount": "",
-            "txtVendorPos": "",
-            "txtCustomerPos": "",
-            "txtCostCenter": "",
-            "txtAssignmentNumber": "",
-            "txtProfitCenter": "",
-            "txtItemText": "",
-            "txtOrderNumber": "",
-            "txtAmountLocCurr": "",
-            "validationStatus": "pending"
-        };
-
-        this.getView().getModel("oTableModel").getData().items.unshift(obj);
-        this.getView().getModel("oTableModel").updateBindings();
-    },
-
-    // Implement template download function
-    onDownloadTemplate: function() {
-        try {
-            if (typeof XLSX === "undefined") {
-                MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-                return;
-            }
-            
-            // Create worksheet with headers
-            var ws = XLSX.utils.json_to_sheet([{
-                "Comp.Code": "",
-                "Amount Doc.Curr.": "",
-                "G/L account": "",
-                "Vendor pos.": "",
-                "Customer pos.": "",
-                "Cost Center": "",
-                "Assignment Number": "",
-                "Profit Center": "",
-                "Item Text": "",
-                "Order Number": "",
-                "Amount Loc.Curr.": ""
-            }]);
-            
-            // Create workbook
-            var wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, "Template");
-            
-            // Generate file and trigger download
-            XLSX.writeFile(wb, "AccountPostingTemplate.xlsx");
-            
-        } catch (error) {
-            console.error("Error generating template:", error);
-            MessageToast.show("Error generating template file. See console for details.");
-        }
-    },
-
-    // Upload file change handler
-    onFileChange: function(oEvent) {
-        // This gets called when a file is selected
-        var oFile = oEvent.getParameter("files")[0];
-        if (!oFile) {
-            MessageToast.show("No file selected");
-            return;
-        }
-        
-        // Verify file type
-        var sFileName = oFile.name;
-        
-        if (sFileName.indexOf(".xlsx") === -1 && sFileName.indexOf(".xls") === -1) {
-            MessageToast.show("Please upload an Excel file (.xlsx or .xls)");
-            return;
-        }
-        
-        this.processExcelFile(oFile);
-    },
-    
-    processExcelFile: function(oFile) {
-        // Check if XLSX is available
-        if (typeof XLSX === "undefined") {
-            MessageToast.show("XLSX library not loaded. Please check your index.html file.");
-            return;
-        }
-        
-        var that = this;
-        var reader = new FileReader();
-        
-        reader.onload = function(e) {
-            try {
-                // Use the modern approach with ArrayBuffer
-                var data = new Uint8Array(e.target.result);
-                var workbook = XLSX.read(data, { type: "array" });
-                var sheetName = workbook.SheetNames[0]; // Get the first sheet
-                
-                // Get Excel data with headers
-                var excelData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-                
-                if (excelData.length === 0) {
-                    MessageToast.show("No data found in the Excel file.");
-                    return;
-                }
-                
-                console.log("Excel data:", excelData);
-                console.log("First row of Excel data:", excelData[0]);
-                
-                // Extract headers from the first object's keys
-                var headers = Object.keys(excelData[0]);
-                console.log("Excel headers:", headers);
-                
-                // Show only columns that are present in the Excel file
-                that._showRelevantColumns(headers);
-                
-                // Map Excel data to model properties based on headers
-                var tableItems = excelData.map(function(row, index) {
-                    var item = {
-                        "validationStatus": "pending", // Default status
-                        "rowNum": index + 1  // Add row number
-                    };
-                    
-                    // Map Excel values to corresponding model properties
-                    headers.forEach(function(header) {
-                        var modelProp = that.columnMapping[header];
-                        
-                        if (modelProp) {
-                            if (row[header] !== undefined) {
-                                item[modelProp] = row[header].toString();
-                            } else {
-                                item[modelProp] = "";
-                            }
-                        }
-                    });
-                    
-                    return item;
-                });
-                
-                // For debugging, log the first table item
-                console.log("First table item:", tableItems[0]);
-                
-                // Update the table model with only the mapped data from Excel
-                var oTableModel = that.getView().getModel("oTableModel");
-                oTableModel.setProperty("/items", tableItems);
-                
-                // Update the table title if element exists
-                var oTitle = that.getView().byId("tableTitle");
-                if (oTitle) {
-                    oTitle.setText("Items (" + tableItems.length + ")");
-                }
-                
-                MessageToast.show("File uploaded successfully! Loaded " + tableItems.length + " records.");
-                
-            } catch (error) {
-                console.error("Error processing Excel file:", error);
-                MessageToast.show("Error processing the Excel file: " + error.message);
-            }
-        };
-        
-        reader.onerror = function(error) {
-            console.error("FileReader error:", error);
-            MessageToast.show("Error reading the file.");
-        };
-        
-        // Read the file as an ArrayBuffer
-        reader.readAsArrayBuffer(oFile);
-    },
-    
-    // Delete button logic
-    onDelete: function() {
-        var oTable = this.byId("accountTable");
-        var aSelectedItems = oTable.getSelectedItems();
-        var oModel = this.getView().getModel("oTableModel");
-        var aItems = oModel.getProperty("/items");
-    
-        if (aSelectedItems.length === 0) {
-            sap.m.MessageToast.show("Please select at least one row to delete.");
-            return;
-        }
-    
-        // Get the indices of the selected items
-        var aSelectedIndices = [];
-        aSelectedItems.forEach(function(oSelectedItem) {
-            var iIndex = oTable.indexOfItem(oSelectedItem);
-            if (iIndex !== -1) {
-                aSelectedIndices.push(iIndex);
-            }
-        });
-    
-        // Create a new array without the selected rows
-        var aNewItems = aItems.filter(function(item, index) {
-            return aSelectedIndices.indexOf(index) === -1;
-        });
-    
-        // Update the model
-        oModel.setProperty("/items", aNewItems);
-        
-        // Clear selections
-        oTable.removeSelections();
-        
-        sap.m.MessageToast.show("Selected row(s) deleted.");
-    },
-    
-    // Clear filters logic
-    onClearFilters: function() {
-        // Implementation for clearing filters if needed
-        MessageToast.show("Filters cleared");
-    },
-    
-    // Post logic placeholder
-    onPost: function() {
-        // Implementation for posting data
-        MessageToast.show("Post action triggered");
-    },
-    
-    // Handle navigation to detail view
-    onRowPress: function(oEvent) {
-        var oItem = oEvent.getSource();
-        var oContext = oItem.getBindingContext("oTableModel");
-        var path = oContext.getPath();
-        var index = path.split("/")[2];
-        
-        // Navigate to detail view if needed
-        // this._oRouter.navTo("RouteDetailView", {
-        //     TableIndex: index
-        // });
-        
-        MessageToast.show("Row " + (parseInt(index) + 1) + " selected");
-    },
 
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
