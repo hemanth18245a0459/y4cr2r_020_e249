@@ -4,6 +4,7 @@
     padding: 0;
 }*/
 
+/*
 .customBorder {
     border: 2px solid #ccc; 
     border-radius: 10px;
@@ -20,6 +21,7 @@
 .noTopPadding .sapUiRespGridSpan12:first-child {
     padding-top: 0 !important;
 }
+    */
 
 
 /*:root {
@@ -41,8 +43,7 @@
     border-right: none !important;
 }*/
 
-/*
+
 .myCustomPanelBorder {
     border: 2px solid #ccc !important; /* Example: thicker blue border */
   }
-*/

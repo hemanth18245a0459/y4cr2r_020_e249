@@ -13,57 +13,72 @@
 
 	<Page id="accountPage" title="{i18n>title}" titleAlignment="Center" class="sapUiContentPadding" navButtonPress="onNavButtonPress">
 
+		<!-- Panel provides the visual container -->
+		<Panel id="accountPanel" width="100%" backgroundDesign="Solid" class="sapUiResponsivePadding--content myCustomPanelBorder" headerText="">
+			<content>				<!-- Panel's content aggregation -->
+				<FlexBox id="accountFlexBox" width="100%" renderType="Div" justifyContent="SpaceBetween" wrap="Wrap">
+					<!-- Column 1 -->
+					<VBox class="sapUiSmallMarginEnd">
+						<Label id="labelCompanyCode" text="Company Code" required="true" width="100%" />
+						<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." width="100%" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
+
+						<Label id="labelPostingDate" text="Posting Date" required="true" width="100%" class="sapUiSmallMarginTop"/>
+						<DatePicker id="inputPostingDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingDateChange" />
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" />
+						</layoutData>						<!-- Allow to grow/shrink from 0 basis -->
+					</VBox>
+
+					<!-- Column 2 -->
+					<VBox class="sapUiSmallMarginEnd">
+						<Label id="labelDocumentDate" text="Document Date" required="true" width="100%" />
+						<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
+
+						<Label id="labelDocumentType" text="Document Type" width="100%" class="sapUiSmallMarginTop"/>
+						<Input id="inputDocumentType" value="" placeholder="Select Document Type..." width="100%" showValueHelp="true" valueHelpRequest="onDocumentTypeValueHelpRequest" change="onDocumentTypeChange" />
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" />
+						</layoutData>
+					</VBox>
+
+					<!-- Column 3 -->
+					<VBox class="sapUiSmallMarginEnd">
+						<Label id="labelReference" text="Reference" width="100%" />
+						<Input id="inputReference" value="" placeholder="Reference..." width="100%" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />
+
+						<Label id="labelCurrency" text="Currency" required="true" width="100%" class="sapUiSmallMarginTop"/>
+						<Input id="inputCurrency" value="{oTableModel>/selectedCurrency}" width="100%" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" />
+						</layoutData>
+					</VBox>
+
+					<!-- Column 4 -->
+					<VBox class="sapUiSmallMarginEnd">
+						<Label id="labelHeaderText" text="Header Text" width="100%" />
+						<Input id="inputHeaderText" value="" placeholder="Header Text..." width="100%" showValueHelp="true" valueHelpRequest="onHeaderTextValueHelpRequest" change="onHeaderTextChange" />
+						<Label id="labelDocumentNumber" text="Document Number" width="100%" class="sapUiSmallMarginTop"/>
+						<Input id="inputDocumentNumber" value="" placeholder="Enter Doc Number..." width="100%" showValueHelp="true" valueHelpRequest="onDocumentNumberValueHelpRequest" change="onDocumentNumberChange" />
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" />
+						</layoutData>
+					</VBox>
+
+					<!-- Column 5 -->
+					<VBox>						<!-- No margin end on last item -->
+						<Label id="labelPostingPeriod" text="Posting Period" required="true" width="100%" />
+						<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
+						<Label id="labelFiscalYear" text="Fiscal Year" required="true" width="100%" class="sapUiSmallMarginTop" />
+						<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
+						<layoutData>
+							<FlexItemData growFactor="1" baseSize="0%" />
+						</layoutData>
+					</VBox>
+				</FlexBox>
+			</content>			<!-- End of Panel's content -->
+		</Panel>
+
 		<VBox id="accountFormContainer">
-			<!-- SimpleForm Section -->
-			<form:SimpleForm id="accountSimpleForm" editable="true" class="noTitles customBorder noTopPadding sapUISizeCompact" layout="ResponsiveGridLayout" adjustLabelSpan="false" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" columnsXL="4" columnsL="4" columnsM="2">
-				<form:content>
-					<!-- First Column -->
-					<core:Title id="sectionGeneralTitle" class="hiddenTitle" />
-
-					<Label id="labelCompanyCode" required="true" text="Company Code" />
-					<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." width="100%" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
-
-					<Label id="labelPostingDate" required="true" text="Posting Date" />
-					<DatePicker id="inputPostingDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingDateChange" />
-
-					<Label id="labelDocumentDate" required="true" text="Document Date" />
-					<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
-					
-					<!-- Second Column -->
-					<core:Title id="sectionAccountingDetails" class="hiddenTitle" />
-
-					<Label id="labelDocumentType" required="true" text="Document Type" />
-					<Input id="inputDocumentType" value="" placeholder="Select Document Type..." showValueHelp="true" valueHelpRequest="onDocumentTypeValueHelpRequest" change="onDocumentTypeChange" />
-
-					<Label id="labelReference" text="Reference" />
-					<Input id="inputReference" value="" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />	
-
-					<Label id="labelCurrency" required="true" text="Currency" />
-					<Input id="inputCurrency" value="{oTableModel>/selectedCurrency}" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
-
-					<!-- Third Column -->
-					<core:Title id="sectionAdditionalInfo" class="hiddenTitle" />
-
-					<Label id="labelHeaderText" text="Header Text" />
-					<Input id="inputHeaderText" value="" showValueHelp="true" valueHelpRequest="onHeaderTextValueHelpRequest" change="onHeaderTextChange" />
-
-					<Label id="labelDocumentNumber" required="true" text="Document Number" />
-					<Input id="inputDocumentNumber" value="" placeholder="Enter Doc Number..." showValueHelp="true" valueHelpRequest="onDocumentNumberValueHelpRequest" change="onDocumentNumberChange" />
-
-					<Label id="labelPostingPeriod" required="true" text="Posting Period" />
-					<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
-
-					<!-- Fourth Column -->
-					<core:Title id="sectionAdditionalInfo2" class="hiddenTitle" />
-
-					<Label id="labelFiscalYear" required="true" text="Fiscal Year" />
-					<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
-
-					
-
-				</form:content>
-			</form:SimpleForm>
-
 			<smartTable:SmartTable id="smartAccountTable" entitySet="aResults" tableBindingPath="/aResults" enableAutoBinding="true" tableType="Table" enableExport="true" useVariantManagement="true" useTablePersonalisation="true" header="Items" showRowCount="true" persistencyKey="SmartTableAnalytical_PersistencyKey" class="sapUiSmallMarginTop" initiallyVisibleFields="Comp.Code,Amount Doc.Curr.,G/L account,Item Text" ignoredFields="">
 				<smartTable:customToolbar>
 					<OverflowToolbar id="tableToolbar">
