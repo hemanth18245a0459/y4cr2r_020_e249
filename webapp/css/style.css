@@ -3,6 +3,7 @@
     margin: 0;
     padding: 0;
 }*/
+
 .customBorder {
     border: 2px solid #ccc; 
     border-radius: 10px;
@@ -39,3 +40,9 @@
 .noColumnBorders .sapUiTableCtrl {
     border-right: none !important;
 }*/
+
+/*
+.myCustomPanelBorder {
+    border: 2px solid #ccc !important; /* Example: thicker blue border */
+  }
+*/

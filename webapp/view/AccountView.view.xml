@@ -15,28 +15,28 @@
 
 		<VBox id="accountFormContainer">
 			<!-- SimpleForm Section -->
-			<form:SimpleForm id="accountSimpleForm" editable="true" class="noTitles customBorder noTopPadding sapUISizeCompact" layout="ResponsiveGridLayout" adjustLabelSpan="false" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" columnsXL="3" columnsL="3" columnsM="2">
+			<form:SimpleForm id="accountSimpleForm" editable="true" class="noTitles customBorder noTopPadding sapUISizeCompact" layout="ResponsiveGridLayout" adjustLabelSpan="false" labelSpanXL="12" labelSpanL="12" labelSpanM="12" labelSpanS="12" columnsXL="4" columnsL="4" columnsM="2">
 				<form:content>
 					<!-- First Column -->
 					<core:Title id="sectionGeneralTitle" class="hiddenTitle" />
 
 					<Label id="labelCompanyCode" required="true" text="Company Code" />
-					<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
-
-					<Label id="labelDocumentDate" required="true" text="Document Date" />
-					<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
+					<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." width="100%" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
 
 					<Label id="labelPostingDate" required="true" text="Posting Date" />
 					<DatePicker id="inputPostingDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingDateChange" />
 
+					<Label id="labelDocumentDate" required="true" text="Document Date" />
+					<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
+					
 					<!-- Second Column -->
 					<core:Title id="sectionAccountingDetails" class="hiddenTitle" />
 
-					<Label id="labelPostingPeriod" required="true" text="Posting Period" />
-					<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
+					<Label id="labelDocumentType" required="true" text="Document Type" />
+					<Input id="inputDocumentType" value="" placeholder="Select Document Type..." showValueHelp="true" valueHelpRequest="onDocumentTypeValueHelpRequest" change="onDocumentTypeChange" />
 
-					<Label id="labelFiscalYear" required="true" text="Fiscal Year" />
-					<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
+					<Label id="labelReference" text="Reference" />
+					<Input id="inputReference" value="" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />	
 
 					<Label id="labelCurrency" required="true" text="Currency" />
 					<Input id="inputCurrency" value="{oTableModel>/selectedCurrency}" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
@@ -47,8 +47,20 @@
 					<Label id="labelHeaderText" text="Header Text" />
 					<Input id="inputHeaderText" value="" showValueHelp="true" valueHelpRequest="onHeaderTextValueHelpRequest" change="onHeaderTextChange" />
 
-					<Label id="labelReference" text="Reference" />
-					<Input id="inputReference" value="" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />
+					<Label id="labelDocumentNumber" required="true" text="Document Number" />
+					<Input id="inputDocumentNumber" value="" placeholder="Enter Doc Number..." showValueHelp="true" valueHelpRequest="onDocumentNumberValueHelpRequest" change="onDocumentNumberChange" />
+
+					<Label id="labelPostingPeriod" required="true" text="Posting Period" />
+					<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
+
+					<!-- Fourth Column -->
+					<core:Title id="sectionAdditionalInfo2" class="hiddenTitle" />
+
+					<Label id="labelFiscalYear" required="true" text="Fiscal Year" />
+					<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
+
+					
+
 				</form:content>
 			</form:SimpleForm>
 
