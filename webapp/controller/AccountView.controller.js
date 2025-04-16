@@ -537,7 +537,7 @@ sap.ui.define([
                 MessageToast.show("Simulation completed successfully.");
             }
         },
-        
+
         // Updated Add button logic
         onAdd: function() {
             // Get form field values directly using their IDs
@@ -1159,6 +1159,7 @@ sap.ui.define([
             }
         },
 
+        /*
         // Post Button logic starts here
         onPost: function() {
             // Get date values from form fields
@@ -1218,6 +1219,78 @@ sap.ui.define([
             }
         },
         // Post button logic ends here
+        */
+
+        onPost: function() {
+            // Create a date formatter that uses UTC
+            var oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+                pattern: "yyyy-MM-dd",
+                UTC: true
+            });
+            
+            // Get date controls from form
+            var oDocDatePicker = this.byId("inputDocumentDate");
+            var oPostDatePicker = this.byId("inputPostingDate");
+            var oPostPeriodPicker = this.byId("inputPostingPeriod");
+            var oFiscalYearPicker = this.byId("inputFiscalYear");
+            
+            
+            // Function to safely format dates using UTC
+            function formatDateSafely(dateControl) {
+                if (!dateControl || !dateControl.getDateValue()) {
+                    return "Not set";
+                }
+                
+                var oDate = dateControl.getDateValue();
+                // Use the UTC formatter to get consistent dates
+                return oDateFormat.format(oDate);
+            }
+            
+            // Get formatted dates
+            var docDateFormatted = formatDateSafely(oDocDatePicker);
+            var postDateFormatted = formatDateSafely(oPostDatePicker);
+            var postPeriodFormatted = formatDateSafely(oPostPeriodPicker);
+            var fiscalYearValue = oFiscalYearPicker.getValue() || "Not set";
+            
+            // Log the values
+            console.log("Document Date (UTC):", docDateFormatted);
+            console.log("Posting Date (UTC):", postDateFormatted);
+            console.log("Posting Period (UTC):", postPeriodFormatted);
+            console.log("Fiscal Year:", fiscalYearValue);
+            
+            
+            // Get data from the table to prepare for posting
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aItems = oResultModel.getProperty("/aResults");
+            
+            // Count valid and invalid items
+            var validItems = aItems.filter(function(item) {
+                return item.validationStatus === "valid";
+            }).length;
+            
+            var pendingItems = aItems.filter(function(item) {
+                return item.validationStatus === "pending";
+            }).length;
+            
+            var invalidItems = aItems.filter(function(item) {
+                return item.validationStatus === "invalid";
+            }).length;
+            
+            console.log("Items Summary - Valid:", validItems, 
+                        "Pending:", pendingItems, 
+                        "Invalid:", invalidItems);
+            
+            // Show message based on validation status
+            if (invalidItems > 0) {
+                MessageBox.error("Cannot post - " + invalidItems + " items have validation errors.");
+            } else if (pendingItems > 0) {
+                MessageBox.warning("Some items have not been validated. Please run simulation first.");
+            } else if (validItems > 0) {
+                MessageToast.show("Posting successful for " + validItems + " items.");
+            } else {
+                MessageToast.show("No items to post. Please add line items.");
+            }
+        },
 
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
