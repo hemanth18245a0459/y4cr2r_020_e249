@@ -155,6 +155,7 @@ sap.ui.define([
             this._oRouter.attachRouteMatched(this._handleRouteMatched, this);
         },
 
+        /*
         _initializeValidationStatus: function() {
             var oResultModel = this.getView().getModel("oResultModel");
             var aItems = oResultModel.getProperty("/aResults");
@@ -169,7 +170,24 @@ sap.ui.define([
                 oResultModel.refresh(true);
             }
         },
-
+*/
+        _initializeValidationStatus: function() {
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aItems = oResultModel.getProperty("/aResults");
+            
+            if (aItems && aItems.length > 0) {
+                // Use map to create a new array with validation status
+                var updatedItems = aItems.map(function(oItem) {
+                    if (!oItem.hasOwnProperty("validationStatus")) {
+                        oItem.validationStatus = "pending";
+                    }
+                    return oItem;
+                });
+                
+                oResultModel.setProperty("/aResults", updatedItems);
+                oResultModel.refresh(true);
+            }
+        },
         _handleRouteMatched: function (oEvent) {
             var that = this;
             // oEvent.getParameters().arguments.TableIndex
@@ -454,6 +472,7 @@ sap.ui.define([
             oInput.setValue(oSelectedItem.getTitle().trim());
         },
 
+        /*
         // Updated Simulation button logic starts here
         onSimulation: function() {
             var oResultModel = this.getView().getModel("oResultModel");
@@ -484,7 +503,41 @@ sap.ui.define([
             }
         },
         // Simulation button logic ends here
-
+*/
+        onSimulation: function() {
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aItems = oResultModel.getProperty("/aResults");
+            var errorRows = [];
+            
+            // Use map to create a new array with updated validation status
+            var updatedItems = aItems.map(function(oItem, index) {
+                // Validation check - ensure company code and amount are provided
+                var isValid = oItem["Comp.Code"] && 
+                            oItem["Amount Doc.Curr."] && 
+                            !isNaN(parseFloat(oItem["Amount Doc.Curr."]));
+                
+                // Update validation status
+                oItem.validationStatus = isValid ? "valid" : "invalid";
+                
+                if (!isValid) {
+                    errorRows.push(index + 1);
+                }
+                
+                return oItem;
+            });
+            
+            // Update the model with modified items
+            oResultModel.setProperty("/aResults", updatedItems);
+            oResultModel.refresh(true);
+            
+            // Show error message if needed
+            if (errorRows.length > 0) {
+                MessageBox.error("Missing mandatory fields in rows: " + errorRows.join(", "));
+            } else {
+                MessageToast.show("Simulation completed successfully.");
+            }
+        },
+        
         // Updated Add button logic
         onAdd: function() {
             // Get form field values directly using their IDs
@@ -869,7 +922,7 @@ sap.ui.define([
             reader.readAsArrayBuffer(file);
         },
         // Excel upload button logic starts
-
+/*
         // Updated delete button logic starts
         onDelete: function () {
             // Get the inner UI Table from the SmartTable
@@ -913,7 +966,47 @@ sap.ui.define([
             oTable.getBinding().refresh(true);
         },
         // delete button logic ends
+        */
+        
+        onDelete: function () {
+            // Get the inner UI Table from the SmartTable
+            var oSmartTable = this.byId("smartAccountTable");
+            var oTable = oSmartTable.getTable();
+            
+            // Get selected indices from the UI Table
+            var aSelectedIndices = oTable.getSelectedIndices();
+            
+            if (aSelectedIndices.length === 0) {
+                MessageToast.show("Please select at least one row to delete.");
+                return;
+            }
+            
+            // Get current data from the model
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aItems = oResultModel.getProperty("/aResults");
+            
+            // Create a lookup set of selected indices for faster checking
+            var selectedIndexSet = new Set(aSelectedIndices);
+            
+            // Filter out the selected rows - keeping only unselected rows
+            var filteredItems = aItems.filter(function(item, index) {
+                return !selectedIndexSet.has(index);
+            });
+            
+            // Update the model with the filtered array
+            oResultModel.setProperty("/aResults", filteredItems);
+            
+            // Clear selections
+            oTable.clearSelection();
+            
+            // Show success message
+            MessageToast.show("Selected row(s) deleted.");
+            
+            // Refresh the table binding
+            oTable.getBinding().refresh(true);
+        },
 
+        /*
         // Updated Clear filters button logic starts here
         onClearFilters: function() {
             // 1. Clear all SimpleForm fields
@@ -988,6 +1081,143 @@ sap.ui.define([
             }
         },
         // Updated Clear filters button logic ends here
+        */
+
+        onClearFilters: function() {
+            // 1. Clear all SimpleForm fields
+            var oCompanyCode = this.byId("inputCompanyCode");
+            var oDocumentDate = this.byId("inputDocumentDate");
+            var oPostingDate = this.byId("inputPostingDate");
+            var oPostingPeriod = this.byId("inputPostingPeriod");
+            var oFiscalYear = this.byId("inputFiscalYear");
+            var oCurrency = this.byId("inputCurrency");
+            var oHeaderText = this.byId("inputHeaderText");
+            var oReference = this.byId("inputReference");
+            
+            // Reset all field values
+            oCompanyCode.setValue("");
+            oDocumentDate.setValue("");
+            oPostingDate.setValue("");
+            oPostingPeriod.setValue("");
+            oFiscalYear.setValue("");
+            oCurrency.setValue("");
+            oHeaderText.setValue("");
+            oReference.setValue("");
+            
+            // Reset validation states
+            oCompanyCode.setValueState("None");
+            oDocumentDate.setValueState("None");
+            oPostingDate.setValueState("None");
+            oPostingPeriod.setValueState("None");
+            oFiscalYear.setValueState("None");
+            oCurrency.setValueState("None");
+            
+            // 2. Clear SmartTable filters and sorting
+            var oSmartTable = this.byId("smartAccountTable");
+            if (oSmartTable) {
+                // Clear table selections
+                var oTable = oSmartTable.getTable();
+                oTable.clearSelection();
+                
+                // Clear UI Table sorting - use map for cleaner transform
+                if (oTable && oTable.getBinding("rows")) {
+                    // Force remove all sorters from binding
+                    oTable.getBinding("rows").sort([]);
+                    
+                    // Reset sort indicators on columns with map
+                    var aColumns = oTable.getColumns();
+                    aColumns.map(function(oColumn) {
+                        oColumn.setSorted(false);
+                        oColumn.setSortOrder("Ascending");
+                        return oColumn;
+                    });
+                }
+                
+                // Reset filters on columns if any
+                if (oTable && oTable.getColumns) {
+                    var aColumns = oTable.getColumns();
+                    // Use map for cleaner transform
+                    aColumns.map(function(oColumn) {
+                        oColumn.setFiltered(false);
+                        oColumn.setFilterValue("");
+                        return oColumn;
+                    });
+                }
+                
+                // Reset personalization dialog settings if possible
+                if (oSmartTable.getPersoController) {
+                    var oPersoController = oSmartTable.getPersoController();
+                    if (oPersoController && oPersoController.resetPersData) {
+                        oPersoController.resetPersData();
+                    }
+                }
+                
+                // Force rebind without personalization
+                oSmartTable.rebindTable(true);
+                
+                MessageToast.show("All filters and form fields cleared");
+            }
+        },
+
+        // Post Button logic starts here
+        onPost: function() {
+            // Get date values from form fields
+            var oDocDatePicker = this.byId("inputDocumentDate");
+            var oPostDatePicker = this.byId("inputPostingDate");
+            var oPostPeriodPicker = this.byId("inputPostingPeriod");
+            var oFiscalYearPicker = this.byId("inputFiscalYear");
+            
+            // Convert DatePicker values to strings for logging
+            var docDateValue = oDocDatePicker.getDateValue() ? 
+                oDocDatePicker.getDateValue().toLocaleDateString() : "Not set";
+            
+            var postDateValue = oPostDatePicker.getDateValue() ? 
+                oPostDatePicker.getDateValue().toLocaleDateString() : "Not set";
+            
+            var postPeriodValue = oPostPeriodPicker.getDateValue() ? 
+                oPostPeriodPicker.getDateValue().toLocaleDateString() : "Not set";
+            
+            var fiscalYearValue = oFiscalYearPicker.getValue() || "Not set";
+            
+            // Log all date values
+            console.log("Document Date:", docDateValue);
+            console.log("Posting Date:", postDateValue);
+            console.log("Posting Period:", postPeriodValue);
+            console.log("Fiscal Year:", fiscalYearValue);
+            
+            // Get data from the table to prepare for posting
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aItems = oResultModel.getProperty("/aResults");
+            
+            // Count valid and invalid items
+            var validItems = aItems.filter(function(item) {
+                return item.validationStatus === "valid";
+            }).length;
+            
+            var pendingItems = aItems.filter(function(item) {
+                return item.validationStatus === "pending";
+            }).length;
+            
+            var invalidItems = aItems.filter(function(item) {
+                return item.validationStatus === "invalid";
+            }).length;
+            
+            console.log("Items Summary - Valid:", validItems, 
+                        "Pending:", pendingItems, 
+                        "Invalid:", invalidItems);
+            
+            // Show message based on validation status
+            if (invalidItems > 0) {
+                MessageBox.error("Cannot post - " + invalidItems + " items have validation errors.");
+            } else if (pendingItems > 0) {
+                MessageBox.warning("Some items have not been validated. Please run simulation first.");
+            } else if (validItems > 0) {
+                MessageToast.show("Posting successful for " + validItems + " items.");
+            } else {
+                MessageToast.show("No items to post. Please add line items.");
+            }
+        },
+        // Post button logic ends here
 
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
