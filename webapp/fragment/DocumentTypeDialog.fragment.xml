@@ -12,8 +12,5 @@
 		showClearButton="true"
 		items="{
 			path: 'oModel>/Shippers' }">
-		<StandardListItem
-			iconDensityAware="false"
-			iconInset="false"
-			title="{oModel>CompanyName}"    description="{oModel>ShipperID}"/> </SelectDialog>
+		<StandardListItem title="{oModel>CompanyName}" /> </SelectDialog>
 </core:FragmentDefinition>

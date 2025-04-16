@@ -11,9 +11,6 @@
 		cancel=".onDocumentNumberhandleClose"
 		showClearButton="true"
 		items="{
-			path: 'oModel>/Products' }">
-		<StandardListItem
-			iconDensityAware="false"
-			iconInset="false"
-			title="{oModel>ProductName}"    description="{oModel>ProductID}"/> </SelectDialog>
+			path: 'oModel>/Invoices' }">
+		<StandardListItem title="{oModel>OrderID}"/> </SelectDialog>
 </core:FragmentDefinition>

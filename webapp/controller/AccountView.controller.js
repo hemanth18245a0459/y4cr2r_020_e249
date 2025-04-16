@@ -505,7 +505,7 @@ sap.ui.define([
                 var oFilter = new Filter({
                     filters: [
                         new Filter("CompanyName", FilterOperator.Contains, sValue),
-                        new Filter("ShipperID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
+                        // new Filter("ShipperID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
                     ],
                     and: false // OR condition
                 });
@@ -520,7 +520,7 @@ sap.ui.define([
             if (oSelectedItem && oSourceInput) {
                 // Assuming title is CompanyName, description is ShipperID
                 // Set the input field value - choose title or description as needed
-                var sSelectedValue = oSelectedItem.getDescription(); // Example: using ShipperID
+                var sSelectedValue = oSelectedItem.getTitle(); // Example: using ShipperID
                 oSourceInput.setValue(sSelectedValue);
             }
              this._oValueHelpSource = null; // Clear the stored input field
@@ -558,8 +558,8 @@ sap.ui.define([
                  // Filter on ProductName or ProductID
                 var oFilter = new Filter({
                     filters: [
-                        new Filter("ProductName", FilterOperator.Contains, sValue),
-                        new Filter("ProductID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
+                        new Filter("OrderID", FilterOperator.Contains, sValue),
+                        // new Filter("ProductID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
                     ],
                     and: false // OR condition
                 });
@@ -574,7 +574,7 @@ sap.ui.define([
             if (oSelectedItem && oSourceInput) {
                  // Assuming title is ProductName, description is ProductID
                 // Set the input field value - choose title or description as needed
-                var sSelectedValue = oSelectedItem.getDescription(); // Example: using ProductID
+                var sSelectedValue = oSelectedItem.getTitle(); // Example: using ProductID
                 oSourceInput.setValue(sSelectedValue);
             }
             this._oValueHelpSource = null; // Clear the stored input field
