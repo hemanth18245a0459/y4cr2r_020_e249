@@ -472,6 +472,114 @@ sap.ui.define([
             oInput.setValue(oSelectedItem.getTitle().trim());
         },
 
+        // Document Type (NEW)
+        onDocumentTypeValueHelpRequest: function(oEvent) {
+            var oView = this.getView();
+            this._oValueHelpSource = oEvent.getSource(); // Store the input field
+
+            if (!this._pDocTypeDialog) {
+                this._pDocTypeDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "y4cr2r020e249.fragment.DocumentTypeDialog", // New fragment name
+                    controller: this
+                }).then(function (oDialog){
+                    oView.addDependent(oDialog);
+                     // Assign the default OData model (ensure it's configured in manifest)
+                    oDialog.setModel(oView.getModel("oModel")); // Assumes default OData model name
+                    return oDialog;
+                });
+            }
+            this._pDocTypeDialog.then(function(oDialog){
+                oDialog.getBinding("items").filter([]); // Clear previous filters
+                oDialog.open();
+            }.bind(this));
+        },
+
+        onDocumentTypehandleSearch: function (oEvent) {
+            var sValue = oEvent.getParameter("value") || "";
+            var oBinding = oEvent.getParameter("itemsBinding"); // Get binding from event parameter
+             if (!sValue) {
+                oBinding.filter([]);
+            } else {
+                // Filter on Shipper CompanyName or ShipperID
+                var oFilter = new Filter({
+                    filters: [
+                        new Filter("CompanyName", FilterOperator.Contains, sValue),
+                        new Filter("ShipperID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
+                    ],
+                    and: false // OR condition
+                });
+                oBinding.filter([oFilter]);
+            }
+        },
+
+        onDocumentTypehandleClose: function(oEvent) {
+            var oSelectedItem = oEvent.getParameter("selectedItem");
+            var oSourceInput = this._oValueHelpSource; // Use the stored source input
+
+            if (oSelectedItem && oSourceInput) {
+                // Assuming title is CompanyName, description is ShipperID
+                // Set the input field value - choose title or description as needed
+                var sSelectedValue = oSelectedItem.getDescription(); // Example: using ShipperID
+                oSourceInput.setValue(sSelectedValue);
+            }
+             this._oValueHelpSource = null; // Clear the stored input field
+        },
+
+         // Document Number (NEW)
+        onDocumentNumberValueHelpRequest: function(oEvent) {
+            var oView = this.getView();
+            this._oValueHelpSource = oEvent.getSource(); // Store the input field
+
+            if (!this._pDocNumDialog) {
+                this._pDocNumDialog = Fragment.load({
+                    id: oView.getId(),
+                    name: "y4cr2r020e249.fragment.DocumentNumberDialog", // New fragment name
+                    controller: this
+                }).then(function (oDialog){
+                    oView.addDependent(oDialog);
+                     // Assign the default OData model
+                    oDialog.setModel(oView.getModel("oModel")); // Assumes default OData model name
+                    return oDialog;
+                });
+            }
+            this._pDocNumDialog.then(function(oDialog){
+                 oDialog.getBinding("items").filter([]); // Clear previous filters
+                oDialog.open();
+            }.bind(this));
+        },
+
+        onDocumentNumberhandleSearch: function (oEvent) {
+            var sValue = oEvent.getParameter("value") || "";
+            var oBinding = oEvent.getParameter("itemsBinding");
+             if (!sValue) {
+                oBinding.filter([]);
+            } else {
+                 // Filter on ProductName or ProductID
+                var oFilter = new Filter({
+                    filters: [
+                        new Filter("ProductName", FilterOperator.Contains, sValue),
+                        new Filter("ProductID", FilterOperator.EQ, sValue) // Use EQ for ID if needed
+                    ],
+                    and: false // OR condition
+                });
+                oBinding.filter([oFilter]);
+            }
+        },
+
+        onDocumentNumberhandleClose: function(oEvent) {
+             var oSelectedItem = oEvent.getParameter("selectedItem");
+            var oSourceInput = this._oValueHelpSource; // Use the stored source input
+
+            if (oSelectedItem && oSourceInput) {
+                 // Assuming title is ProductName, description is ProductID
+                // Set the input field value - choose title or description as needed
+                var sSelectedValue = oSelectedItem.getDescription(); // Example: using ProductID
+                oSourceInput.setValue(sSelectedValue);
+            }
+            this._oValueHelpSource = null; // Clear the stored input field
+        },
+
         /*
         // Updated Simulation button logic starts here
         onSimulation: function() {

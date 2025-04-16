@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="docTypeSelectDialog"
+		noDataText="No Document Types Found"
+		title="Select Document Type"
+		searchPlaceholder="Search Document Type or ID..."
+		liveChange=".onDocumentTypehandleSearch"
+		confirm=".onDocumentTypehandleClose"
+		cancel=".onDocumentTypehandleClose"
+		showClearButton="true"
+		items="{
+			path: 'oModel>/Shippers' }">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oModel>CompanyName}"    description="{oModel>ShipperID}"/> </SelectDialog>
+</core:FragmentDefinition>

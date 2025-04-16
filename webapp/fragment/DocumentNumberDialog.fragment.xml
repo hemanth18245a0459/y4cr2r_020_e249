@@ -1,0 +1,19 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="docNumSelectDialog"
+		noDataText="No Document Numbers Found"
+		title="Select Document Number"
+		searchPlaceholder="Search Document Name or ID..."
+		liveChange=".onDocumentNumberhandleSearch"
+		confirm=".onDocumentNumberhandleClose"
+		cancel=".onDocumentNumberhandleClose"
+		showClearButton="true"
+		items="{
+			path: 'oModel>/Products' }">
+		<StandardListItem
+			iconDensityAware="false"
+			iconInset="false"
+			title="{oModel>ProductName}"    description="{oModel>ProductID}"/> </SelectDialog>
+</core:FragmentDefinition>
