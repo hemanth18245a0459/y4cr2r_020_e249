@@ -8,13 +8,31 @@ sap.ui.define([
     "sap/ui/model/type/Currency",
     "sap/m/MessageBox",
     "sap/m/P13nColumnsPanel",
-    "sap/m/CheckBox"
-], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency, MessageBox, P13nColumnsPanel, CheckBox) {
+    "sap/m/CheckBox",
+    "sap/m/MessagePopover",
+	"sap/m/MessageItem",
+	"sap/m/Link",
+    "sap/ui/core/library"
+], function (Controller, JSONModel, MessageToast, Fragment, Filter, FilterOperator, Currency, MessageBox, P13nColumnsPanel, CheckBox, MessagePopover, MessageItem, Link, coreLibrary ) {
     "use strict";
+
+    // Get MessageType enum from the core library
+    var MessageType = coreLibrary.MessageType;
 
     // var XLSX = window.XLSX;
 
     return Controller.extend("y4cr2r020e249.controller.AccountView", {
+
+        // --- Add a formatter for MessageType ---
+        messageTypeFormatter: function(sMsgTypeString) {
+            switch (sMsgTypeString) {
+                case "Error":       return MessageType.Error;
+                case "Warning":     return MessageType.Warning;
+                case "Success":     return MessageType.Success;
+                case "Information": return MessageType.Information;
+                default:            return MessageType.None; // Or Information/Warning as default
+            }
+        },
 
         onInit: function () {
             var oDocDatePicker = this.byId("inputDocumentDate");
@@ -143,6 +161,36 @@ sap.ui.define([
             // Explicitly set the named model on the SmartTable instance
             this.getView().byId("smartAccountTable").setModel(this.getView().getModel("oResultModel"));
 
+            // --- Initialize Message Model ---
+            var oMessageModel = new JSONModel([]);
+            this.getView().setModel(oMessageModel, "messageModel");
+            // --------------------------------
+
+            // --- Create Message Popover programmatically ---
+            var oMessageTemplate = new MessageItem({
+                // Use the new formatter for the 'type' property
+				type: {
+                    path: 'messageModel>type',
+                    formatter: this.messageTypeFormatter // <<< Use formatter
+                },
+				title: '{messageModel>title}',
+				description: '{messageModel>description}'
+                // subtitle: '{messageModel>subtitle}',
+				// counter: '{messageModel>counter}'
+			});
+
+            // Create and store the popover instance on the controller instance ('this')
+            this._oMessagePopover = new MessagePopover({ // <<< Use this._oMessagePopover
+				items: {
+					path: 'messageModel>/',
+					template: oMessageTemplate
+				}
+			});
+
+            // Add the popover as a dependent to the button
+            this.byId("messagePopoverBtn").addDependent(this._oMessagePopover); // <<< Use this._oMessagePopover
+            // ---------------------------------------------
+
             // Check if XLSX is globally available
             if (typeof XLSX === "undefined") {
                 console.error("XLSX library not loaded. Check your index.html file.");
@@ -198,6 +246,93 @@ sap.ui.define([
             }
         },
 
+        // --- Helper function to add messages (No change needed here) ---
+        _addMessage: function (sType, sTitle, sDescription) {
+            var oMessageModel = this.getView().getModel("messageModel");
+            var aMessages = oMessageModel.getData(); // Get the array reference
+            aMessages.push({
+                type: sType, // Store as string (e.g., "Error", "Information")
+                title: sTitle,
+                description: sDescription
+            });
+            oMessageModel.refresh(true); // Refresh bindings
+        },
+        // ------------------------------------
+
+        // --- Formatter Functions for the Button ---
+
+        // Determines button icon based on highest severity message
+        buttonIconFormatter: function (aMessages) {
+            var sIcon = "sap-icon://message-popup"; // Default icon
+            if (!aMessages || aMessages.length === 0) {
+                return sIcon;
+            }
+
+            aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+					case "Error": // MessageType.Error
+						sIcon = "sap-icon://error";
+						break;
+					case "Warning": // MessageType.Warning
+						sIcon = sIcon !== "sap-icon://error" ? "sap-icon://alert" : sIcon;
+						break;
+					case "Success": // MessageType.Success
+						sIcon = sIcon !== "sap-icon://error" && sIcon !== "sap-icon://alert" ? "sap-icon://sys-enter-2" : sIcon;
+						break;
+					default: // MessageType.Information or others
+						sIcon = (sIcon !== "sap-icon://error" && sIcon !== "sap-icon://alert" && sIcon !== "sap-icon://sys-enter-2") ? "sap-icon://information" : sIcon;
+						break;
+				}
+			});
+            return sIcon;
+        },
+
+        // Determines button type (color) based on highest severity message
+        buttonTypeFormatter: function (aMessages) {
+            var sHighestSeverityType = "Default"; // Default type
+             if (!aMessages || aMessages.length === 0) {
+                return sHighestSeverityType;
+            }
+
+            aMessages.forEach(function (sMessage) {
+				switch (sMessage.type) {
+                    case "Error": // MessageType.Error
+						sHighestSeverityType = "Negative";
+						break;
+					case "Warning": // MessageType.Warning
+						sHighestSeverityType = sHighestSeverityType !== "Negative" ? "Critical" : sHighestSeverityType;
+						break;
+					case "Success": // MessageType.Success
+						sHighestSeverityType = sHighestSeverityType !== "Negative" && sHighestSeverityType !== "Critical" ?  "Success" : sHighestSeverityType;
+						break;
+					default: // MessageType.Information or others
+						sHighestSeverityType = (sHighestSeverityType !== "Negative" && sHighestSeverityType !== "Critical" && sHighestSeverityType !== "Success") ? "Neutral" : sHighestSeverityType;
+						break;
+				}
+			});
+            return sHighestSeverityType;
+        },
+
+        // Returns the total number of messages
+        totalMessageCountFormatter: function (aMessages) {
+            if (!aMessages) {
+                return 0;
+            }
+            return aMessages.length; // Return the total count
+        },
+
+        // ------------------------------------
+
+        // --- Handler for the message button press (FIXED) ---
+        handleMessagePopoverPress: function (oEvent) {
+            // Access the popover instance stored on the controller
+            if (this._oMessagePopover) { // <<< Use this._oMessagePopover
+			    this._oMessagePopover.toggle(oEvent.getSource()); // <<< Use this._oMessagePopover
+            } else {
+                 this._addMessage("Error", "Error", "Message Popover not initialized correctly.");
+            }
+		},
+
         // onReadData: function () {
         //     var oModel = this.getView().getModel("oModel");
         //     oModel.read("/Customers", {
@@ -244,6 +379,7 @@ sap.ui.define([
                         sap.ui.core.BusyIndicator.hide();
                         console.error("Error reading data:", oError);
                         sap.m.MessageToast.show("Error loading company data");
+                        this._addMessage("Error", "Configuration Error", "OData Model not available for Company Code lookup.");
                     }
                 });
             } else {
@@ -665,6 +801,7 @@ sap.ui.define([
                 !oCurrency.getValue()) {
                 
                 MessageBox.error("Please fill all mandatory fields");
+                this._addMessage("Error", "Add Row", "Please fill all mandatory fields");
                 return;
             }
             
@@ -721,6 +858,7 @@ sap.ui.define([
             oResultModel.setProperty("/aResults", aResults);
             
             MessageToast.show("New row added");
+            this._addMessage("Information", "New Row Added", "New row has been added to the table");
         },
         // Add button logic ends
 

@@ -482,7 +482,9 @@
 		<!-- Footer Section -->
 		<footer>
 			<OverflowToolbar id="otbFooter">
-				<Button id="btnNotification" type="Emphasized" tooltip="Notifications" text="{= ${/notifications}.length }" icon="sap-icon://message-popup" press="onNotificationPress">
+				<Button id="messagePopoverBtn"
+					icon="{path: 'messageModel>/', formatter: '.buttonIconFormatter'}"     type="{path: 'messageModel>/', formatter: '.buttonTypeFormatter'}"     text= "{path: 'messageModel>/', formatter: '.totalMessageCountFormatter'}" press=".handleMessagePopoverPress"
+					ariaHasPopup="Dialog">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
