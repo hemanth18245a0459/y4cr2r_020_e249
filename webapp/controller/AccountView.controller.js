@@ -801,7 +801,7 @@ sap.ui.define([
                 !oCurrency.getValue()) {
                 
                 MessageBox.error("Please fill all mandatory fields");
-                this._addMessage("Error", "Add Row", "Please fill all mandatory fields");
+                this._addMessage("Error", "Failed to add new Row", "Please fill all mandatory fields");
                 return;
             }
             
