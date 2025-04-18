@@ -18,58 +18,60 @@
 			<content>				<!-- Panel's content aggregation -->
 				<FlexBox id="accountFlexBox" width="100%" renderType="Div" justifyContent="SpaceBetween" wrap="Wrap">
 					<!-- Column 1 -->
-					<VBox class="sapUiSmallMarginEnd">
-						<Label id="labelCompanyCode" text="Company Code" required="true" width="100%" />
-						<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." width="100%" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+						<Label id="labelCompanyCode" text="Company Code" required="true" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputCompanyCode" value="" placeholder="Enter Company Code ..." width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onCompanyCodeValueHelpRequest" change="onCompanyCodeChange" />
 
-						<Label id="labelPostingDate" text="Posting Date" required="true" width="100%" class="sapUiSmallMarginTop"/>
-						<DatePicker id="inputPostingDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingDateChange" />
+						<Label id="labelPostingDate" text="Posting Date" required="true" width="100%" class="sapUiTinyMarginTop"/>
+						<DatePicker id="inputPostingDate" value="" placeholder="e.g.31.12.2025" width="100%" class="sapUiTinyMarginBottom" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingDateChange" />
 						<layoutData>
 							<FlexItemData growFactor="1" baseSize="0%" />
 						</layoutData>						<!-- Allow to grow/shrink from 0 basis -->
 					</VBox>
 
 					<!-- Column 2 -->
-					<VBox class="sapUiSmallMarginEnd">
-						<Label id="labelDocumentDate" text="Document Date" required="true" width="100%" />
-						<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+						<Label id="labelDocumentDate" text="Document Date" required="true" width="100%" class="sapUiTinyMarginTop"/>
+						<DatePicker id="inputDocumentDate" value="" placeholder="e.g.31.12.2025" width="100%" class="sapUiTinyMarginBottom" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onDocumentDateChange" />
 
-						<Label id="labelDocumentType" text="Document Type" width="100%" class="sapUiSmallMarginTop"/>
-						<Input id="inputDocumentType" value="" placeholder="Select Document Type..." width="100%" showValueHelp="true" valueHelpRequest="onDocumentTypeValueHelpRequest" change="onDocumentTypeChange" />
+						<Label id="labelDocumentType" text="Document Type" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputDocumentType" value="" placeholder="Select Document Type..." width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onDocumentTypeValueHelpRequest" change="onDocumentTypeChange" />
 						<layoutData>
 							<FlexItemData growFactor="1" baseSize="0%" />
 						</layoutData>
 					</VBox>
 
 					<!-- Column 3 -->
-					<VBox class="sapUiSmallMarginEnd">
-						<Label id="labelReference" text="Reference" width="100%" />
-						<Input id="inputReference" value="" placeholder="Reference..." width="100%" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+						<Label id="labelReference" text="Reference" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputReference" value="" placeholder="Reference..." width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onReferenceValueHelpRequest" change="onReferenceChange" />
 
-						<Label id="labelCurrency" text="Currency" required="true" width="100%" class="sapUiSmallMarginTop"/>
-						<Input id="inputCurrency" value="{oTableModel>/selectedCurrency}" width="100%" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
+						<Label id="labelCurrency" text="Currency" required="true" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputCurrency" value="{oTableModel>/selectedCurrency}" width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onCurrencyValueHelpRequest" change="onCurrencyChange" />
 						<layoutData>
 							<FlexItemData growFactor="1" baseSize="0%" />
 						</layoutData>
 					</VBox>
 
 					<!-- Column 4 -->
-					<VBox class="sapUiSmallMarginEnd">
-						<Label id="labelHeaderText" text="Header Text" width="100%" />
-						<Input id="inputHeaderText" value="" placeholder="Header Text..." width="100%" showValueHelp="true" valueHelpRequest="onHeaderTextValueHelpRequest" change="onHeaderTextChange" />
-						<Label id="labelDocumentNumber" text="Document Number" width="100%" class="sapUiSmallMarginTop"/>
-						<Input id="inputDocumentNumber" value="" placeholder="Enter Doc Number..." width="100%" showValueHelp="true" valueHelpRequest="onDocumentNumberValueHelpRequest" change="onDocumentNumberChange" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">
+						<Label id="labelHeaderText" text="Header Text" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputHeaderText" value="" placeholder="Header Text..." width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onHeaderTextValueHelpRequest" change="onHeaderTextChange" />
+
+						<Label id="labelDocumentNumber" text="Document Number" width="100%" class="sapUiTinyMarginTop"/>
+						<Input id="inputDocumentNumber" value="" placeholder="Enter Doc Number..." width="100%" class="sapUiTinyMarginBottom" showValueHelp="true" valueHelpRequest="onDocumentNumberValueHelpRequest" change="onDocumentNumberChange" />
 						<layoutData>
 							<FlexItemData growFactor="1" baseSize="0%" />
 						</layoutData>
 					</VBox>
 
 					<!-- Column 5 -->
-					<VBox>						<!-- No margin end on last item -->
-						<Label id="labelPostingPeriod" text="Posting Period" required="true" width="100%" />
-						<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
-						<Label id="labelFiscalYear" text="Fiscal Year" required="true" width="100%" class="sapUiSmallMarginTop" />
-						<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
+					<VBox class="sapUiSmallMarginBegin sapUiSmallMarginEnd">						<!-- No margin end on last item -->
+						<Label id="labelPostingPeriod" text="Posting Period" required="true" width="100%" class="sapUiTinyMarginTop"/>
+						<DatePicker id="inputPostingPeriod" value="" placeholder="e.g.31.12.2025" width="100%" class="sapUiTinyMarginBottom" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onPostingPeriodChange" />
+
+						<Label id="labelFiscalYear" text="Fiscal Year" required="true" width="100%" class="sapUiTinyMarginTop" />
+						<DatePicker id="inputFiscalYear" value="" placeholder="e.g.2025" width="100%" class="sapUiTinyMarginBottom" displayFormat="yyyy" valueFormat="yyyy" change="onFiscalYearChange" />
 						<layoutData>
 							<FlexItemData growFactor="1" baseSize="0%" />
 						</layoutData>
@@ -84,7 +86,7 @@
 					<OverflowToolbar id="tableToolbar">
 						<ToolbarSpacer />
 						<Button id="btnDownloadTemplate" type="Ghost" icon="sap-icon://download" text="Download Template" press="onDownloadTemplate" />
-						<Button id="btnUploadItems" class="sapUiTinyMarginEnd" press="onFEUploadItems" text="Upload" type="Ghost"/>
+						<Button id="btnUploadItems" press="onFEUploadItems" text="Upload" type="Ghost"/>
 						<Button id="btnSimulation" type="Success" icon="sap-icon://validate" text="Simulation" press="onSimulation" />
 						<Button id="btnPost" type="Attention" icon="sap-icon://repost" text="Post" press="onPost" class="myAttentionBtn" />
 						<Button id="btnAdd" type="Emphasized" icon="sap-icon://add" text="Add" press="onAdd" />
