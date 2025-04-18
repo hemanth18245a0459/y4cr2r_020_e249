@@ -289,7 +289,7 @@ sap.ui.define([
 
         // Determines button type (color) based on highest severity message
         buttonTypeFormatter: function (aMessages) {
-            var sHighestSeverityType = "Default"; // Default type
+            var sHighestSeverityType = "Emphasized"; // Default type
              if (!aMessages || aMessages.length === 0) {
                 return sHighestSeverityType;
             }
