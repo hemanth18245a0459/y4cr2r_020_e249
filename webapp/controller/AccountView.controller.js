@@ -175,7 +175,8 @@ sap.ui.define([
                     formatter: this.messageTypeFormatter // <<< Use formatter
                 },
 				title: '{messageModel>title}',
-				description: '{messageModel>description}'
+				description: '{messageModel>description}',
+                // timestamp: '{messageModel>timestamp}' // <<< Bind timestamp property
                 // subtitle: '{messageModel>subtitle}',
 				// counter: '{messageModel>counter}'
 			});
@@ -251,14 +252,29 @@ sap.ui.define([
         _addMessage: function (sType, sTitle, sDescription) {
             var oMessageModel = this.getView().getModel("messageModel");
             var aMessages = oMessageModel.getData(); // Get the array reference
+            var sTimestamp = new Date().toLocaleString(); // Format timestamp for display
             aMessages.push({
                 type: sType, // Store as string (e.g., "Error", "Information")
                 title: sTitle,
-                description: sDescription
+                // Append timestamp directly to the description
+                description: "(" + sTimestamp + ")\n" + sDescription,
+                // Keep raw timestamp if needed for sorting
+                timestampForSort: new Date()
             });
+            // Sort by timestamp descending (newest first)
+            aMessages.sort((a, b) => b.timestampForSort - a.timestampForSort);
             oMessageModel.refresh(true); // Refresh bindings
         },
         // ------------------------------------
+
+        // --- Helper function to clear ALL messages ---
+        _clearAllMessages: function() {
+            var oMessageModel = this.getView().getModel("messageModel");
+            oMessageModel.setData([]);
+            oMessageModel.refresh();
+            console.log("All messages cleared.");
+        },
+        // ------------------------------------------------
 
         // --- Formatter Functions for the Button ---
 
@@ -776,10 +792,11 @@ sap.ui.define([
             // Show error message if needed
             if (errorRows.length > 0) {
                 MessageBox.error("Missing mandatory fields in rows: " + errorRows.join(", "));
+                // Add error message, DO NOT clear others
                 this._addMessage("Error", "Simulation Errors", "Check failed for rows: " + errorRows.join(", "));
             } else if (updatedItems.length > 0) {
                 // SUCCESS: Clear previous messages first, then add success message
-                this._clearAllMessages();
+                this._clearAllMessages(); // <<< CLEAR ALL ON SUCCESS
                 this._addMessage("Success", "Simulation OK", "Simulation completed successfully.");
             }
             else {
@@ -810,6 +827,13 @@ sap.ui.define([
                 this._addMessage("Error", "Failed to add new Row", "Please fill all mandatory fields");
                 return;
             }
+
+            // --- If validation passed ---
+
+            // 3. Clear previous messages *NOW* because validation succeeded
+            this._clearAllMessages(); // <<< CLEAR ALL ON SUCCESSFUL ADD
+
+            // 4. Proceed to create and add the row using standardized keys
             
             // Create new row object
             var oNewRow = {
@@ -863,6 +887,7 @@ sap.ui.define([
             // Update the model
             oResultModel.setProperty("/aResults", aResults);
             
+            // 5. Add a *new* success/info message
             MessageToast.show("New row added");
             this._addMessage("Information", "New Row Added", "New row has been added to the table");
         },
@@ -935,6 +960,8 @@ sap.ui.define([
                     URL.revokeObjectURL(url);
                 }, 0);
                 
+                // clear messages on successful download start
+                this._clearAllMessages();
                 MessageToast.show("Template downloaded successfully.");
                 this._addMessage("Success", "Template Downloaded", "Template downloaded successfully.");
                 
@@ -993,6 +1020,7 @@ sap.ui.define([
 
                     if (!excelData || excelData.length === 0) {
                         MessageToast.show("No data found in the selected Excel sheet.");
+                        // Add warning, DO NOT clear
                         that._addMessage("Warning", "Upload Info", "No data found in the selected Excel sheet.");
                         return;
                     }
@@ -1044,6 +1072,27 @@ sap.ui.define([
                         //-------------------------------------------------------
                     };
 
+                    const expectedHeaders = Object.keys(columnMapping);
+
+                    // ** --- START HEADER VALIDATION --- **
+                    const actualHeaders = Object.keys(excelData[0]);
+                    let bIsValidStructure = true;
+                    let aMissingHeaders = [];
+
+                    expectedHeaders.forEach(header => {
+                        // Check if *every* expected header exists in the uploaded file
+                        if (!actualHeaders.includes(header)) {
+                            bIsValidStructure = false;
+                            aMissingHeaders.push(header);
+                        }
+                    });
+
+                    if (!bIsValidStructure) {
+                        that._addMessage("Error", "Invalid File Structure", "The uploaded Excel file is missing expected columns: " + aMissingHeaders.join(", ") + ". Please use the downloaded template or correct the file.");
+                        return; // Stop processing
+                    }
+                    // ** --- END HEADER VALIDATION --- **
+
                     // Define numeric fields using Standardized Keys
                     const numericFields = [
                         "Amount Doc.Curr.", "Amount Loc.Curr.", "Quantity",
@@ -1088,6 +1137,8 @@ sap.ui.define([
                     // Get the result model (already set on the view with name "oResultModel")
                     var oResultModel = that.getView().getModel("oResultModel");
                     if (oResultModel) {
+                        // SUCCESS: Clear previous messages first
+                        that._clearAllMessages(); // <<< CLEAR ALL ON SUCCESS
                         // Update the data in the model
                         oResultModel.setProperty("/aResults", mappedData);
                         MessageToast.show("File uploaded successfully! " + mappedData.length + " items loaded.");
@@ -1103,18 +1154,22 @@ sap.ui.define([
                         }
                     } else {
                         console.error("oResultModel not found.");
-                        MessageToast.show("Error: Could not find table model to update.");
+                        // MessageToast.show("Error: Could not find table model to update.");
                     }
 
                 } catch (error) {
+                    // Add error, DO NOT clear others
                     console.error("Error processing Excel file:", error);
                     MessageBox.error("Error processing the Excel file. Please ensure it's a valid format and the structure is correct. Details: " + error.message);
+                    that._addMessage("Error", "Upload Error", "Processing failed: " + error.message);
                 }
             };
 
             reader.onerror = (error) => {
                 console.error("FileReader error:", error);
                 MessageToast.show("Error reading the file.");
+                // Add error, DO NOT clear others
+                that._addMessage("Error", "File Read Error", "Could not read the selected file.");
             };
 
             // Use readAsArrayBuffer instead of the deprecated readAsBinaryString
@@ -1484,10 +1539,13 @@ sap.ui.define([
                 MessageBox.error("Cannot post - " + invalidItems + " items have validation errors.");
             } else if (pendingItems > 0) {
                 MessageBox.warning("Some items have not been validated. Please run simulation first.");
+                this._addMessage("Warning", "Post Warning", "Some items have not been validated. Please run simulation first.");
             } else if (validItems > 0) {
                 MessageToast.show("Posting successful for " + validItems + " items.");
+                this._addMessage("Success", "Post Successful", "Posting successful for " + validItems + " items.");
             } else {
                 MessageToast.show("No items to post. Please add line items.");
+                this._addMessage("Information", "Post Info", "No valid items to post.");
             }
         },
 /*
