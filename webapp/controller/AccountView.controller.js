@@ -79,7 +79,7 @@ sap.ui.define([
                         "Comp.Code": "COMP001",
                         "Amount Doc.Curr.": 1000,
                         "Amount Loc.Curr.": 950,
-                        "G/L account": "4000",
+                        "GL account": "4000", // Standardized key
                         "Vendor pos.": "V001",
                         "Customer pos.": "C001",
                         "Cost center": "CC100",
@@ -87,12 +87,12 @@ sap.ui.define([
                         "Assignment number": "ASG789",
                         "Item Text": "Item description",
                         "Profit Center": "PC001",
-                        "Value Date": "2025-01-01",
+                        "Value Date": "2025-01-01", // Use ISO format YYYY-MM-DD if binding DatePicker valueFormat directly
                         "Business area": "BA01",
                         "Quantity": 10,
                         "Unit": "EA",
-                        "Puchase Order": "PO12345",
-                        "PO Item Adjust": "001",
+                        "Puchase Order": "PO12345", // Standardized key
+                        "PO Item Adjust": "001",   // Standardized key
                         "Trad. Partn.": "TP100",
                         "St. Centr. bk ind.": "X",
                         "Suppl. Ctry": "US",
@@ -103,7 +103,7 @@ sap.ui.define([
                         "Disc.base": 950,
                         "Days 1": 30,
                         "Disc.1": 2,
-                        "Baseline Date": "2025-01-01",
+                        "Baseline Date": "2025-01-01", // Use ISO format YYYY-MM-DD if binding DatePicker valueFormat directly
                         "Payt Terms": "NET 30",
                         "PaymBlk": "PB001",
                         "Transaction Type": "TRX",
@@ -112,12 +112,13 @@ sap.ui.define([
                         "Payment Ref.": "PMT123",
                         "Dunn. Block": "DB001",
                         "Business place": "BP001"
+                        // validationStatus will be added by _initializeValidationStatus
                     },
                     {
                         "Comp.Code": "COMP002",
                         "Amount Doc.Curr.": 2000,
                         "Amount Loc.Curr.": 1900,
-                        "G/L account": "4001",
+                        "GL account": "4001", // Standardized key
                         "Vendor pos.": "V002",
                         "Customer pos.": "C002",
                         "Cost center": "CC200",
@@ -125,12 +126,12 @@ sap.ui.define([
                         "Assignment number": "ASG890",
                         "Item Text": "Another item description",
                         "Profit Center": "PC002",
-                        "Value Date": "2025-02-01",
+                        "Value Date": "2025-02-01", // Use ISO format
                         "Business area": "BA02",
                         "Quantity": 20,
                         "Unit": "KG",
-                        "Puchase Order": "PO54321",
-                        "PO Item Adjust": "002",
+                        "Puchase Order": "PO54321", // Standardized key
+                        "PO Item Adjust": "002",   // Standardized key
                         "Trad. Partn.": "TP200",
                         "St. Centr. bk ind.": "Y",
                         "Suppl. Ctry": "CA",
@@ -141,7 +142,7 @@ sap.ui.define([
                         "Disc.base": 1900,
                         "Days 1": 45,
                         "Disc.1": 3,
-                        "Baseline Date": "2025-02-01",
+                        "Baseline Date": "2025-02-01", // Use ISO format
                         "Payt Terms": "NET 45",
                         "PaymBlk": "PB002",
                         "Transaction Type": "INV",
@@ -756,9 +757,7 @@ sap.ui.define([
             // Use map to create a new array with updated validation status
             var updatedItems = aItems.map(function(oItem, index) {
                 // Validation check - ensure company code and amount are provided
-                var isValid = oItem["Comp.Code"] && 
-                            oItem["Amount Doc.Curr."] && 
-                            !isNaN(parseFloat(oItem["Amount Doc.Curr."]));
+                var isValid = oItem["Comp.Code"] && oItem["Amount Doc.Curr."] && !isNaN(parseFloat(oItem["Amount Doc.Curr."]));
                 
                 // Update validation status
                 oItem.validationStatus = isValid ? "valid" : "invalid";
@@ -777,8 +776,15 @@ sap.ui.define([
             // Show error message if needed
             if (errorRows.length > 0) {
                 MessageBox.error("Missing mandatory fields in rows: " + errorRows.join(", "));
-            } else {
+                this._addMessage("Error", "Simulation Errors", "Check failed for rows: " + errorRows.join(", "));
+            } else if (updatedItems.length > 0) {
+                // SUCCESS: Clear previous messages first, then add success message
+                this._clearAllMessages();
+                this._addMessage("Success", "Simulation OK", "Simulation completed successfully.");
+            }
+            else {
                 MessageToast.show("Simulation completed successfully.");
+                this._addMessage("Information", "Simulation Info", "No items to simulate.");
             }
         },
 
@@ -807,42 +813,42 @@ sap.ui.define([
             
             // Create new row object
             var oNewRow = {
-                "Comp.Code": oCompanyCode.getValue(),
-                "Amount Doc.Curr.": "",
-                "Amount Loc.Curr.": "",
-                "G/L account": "",
-                "Vendor pos.": "",
-                "Customer pos.": "",
-                "Cost center": "",
-                "Order Number": "",
+                "Comp.Code": this.byId("inputCompanyCode").getValue(),
+                "Amount Doc.Curr.": "", 
+                "Amount Loc.Curr.": "", 
+                "GL account": "",      
+                "Vendor pos.": "",      
+                "Customer pos.": "",    
+                "Cost center": "",      
+                "Order Number": "",     
                 "Assignment number": "",
-                "Item Text": "",
-                "Profit Center": "",
-                "Value Date": "",
-                "Business Area": "",
-                "Quantity": "",
-                "Unit": "",
-                "Purchase Order": "",
-                "PO Item Adjustment": "",
-                "Trading Partner": "",
-                "St. Central Bank Ind.": "",
-                "Supplementary Country": "",
-                "Tax Code": "",
-                "Tax Percentage": "",
-                "Plant": "",
-                "Withholding Tax Code": "",
-                "Discount Base": "",
-                "Days 1": "",
-                "Discount 1": "",
-                "Baseline Date": "",
-                "Payment Terms": "",
-                "Payment Block": "",
-                "Transaction Type": "",
-                "SGL Indicator": "",
-                "Payment Method": "",
-                "Payment Reference": "",
-                "Dunning Block": "",
-                "Business Place": "",
+                "Item Text": "",        
+                "Profit Center": "",    
+                "Value Date": "",       
+                "Business area": "",    
+                "Quantity": "",         
+                "Unit": "",             
+                "Puchase Order": "",    
+                "PO Item Adjust": "",   
+                "Trad. Partn.": "",     
+                "St. Centr. bk ind.": "",
+                "Suppl. Ctry": "",      
+                "Tax code": "",         
+                "Tax percent.": "",     
+                "Plant": "",            
+                "Withh.TxCd": "",       
+                "Disc.base": "",        
+                "Days 1": "",           
+                "Disc.1": "",           
+                "Baseline Date": "",    
+                "Payt Terms": "",       
+                "PaymBlk": "",          
+                "Transaction Type": "", 
+                "SGL Ind.": "",         
+                "Pymt method": "",      
+                "Payment Ref.": "",     
+                "Dunn. Block": "",      
+                "Business place": "",   
                 "validationStatus": "pending"
                 
             };
@@ -874,89 +880,26 @@ sap.ui.define([
                 
                 // Create column headers based on the expected Excel structure
                 const headers = [
-                    "Company Code",
-                    "Document Currency Amount",
-                    "Local Currency Amount",
-                    "G/L Account",
-                    "Vendor Position",
-                    "Customer Position",
-                    "Cost Center",
-                    "Order Number",
-                    "Assignment Number",
-                    "Item Text",
-                    "Profit Center",
-                    "Value Date",
-                    "Business Area",
-                    "Quantity",
-                    "Unit",
-                    "Purchase Order",
-                    "PO Item Adjustment",
-                    "Trading Partner",
-                    "St. Central Bank Ind.",
-                    "Supplementary Country",
-                    "Tax Code",
-                    "Tax Percentage",
-                    "Plant",
-                    "Withholding Tax Code",
-                    "Discount Base",
-                    "Days 1",
-                    "Discount 1",
-                    "Baseline Date",
-                    "Payment Terms",
-                    "Payment Block",
-                    "Transaction Type",
-                    "SGL Indicator",
-                    "Payment Method",
-                    "Payment Reference",
-                    "Dunning Block",
-                    "Business Place"
+                    "Comp.Code", "Amount Doc.Curr.", "Amount Loc.Curr.", "GL account",
+                    "Vendor pos.", "Customer pos.", "Cost center", "Order Number",
+                    "Assignment number", "Item Text", "Profit Center", "Value Date",
+                    "Business area", "Quantity", "Unit", "Puchase Order",
+                    "PO Item Adjust", "Trad. Partn.", "St. Centr. bk ind.", "Suppl. Ctry",
+                    "Tax code", "Tax percent.", "Plant", "Withh.TxCd", "Disc.base",
+                    "Days 1", "Disc.1", "Baseline Date", "Payt Terms", "PaymBlk",
+                    "Transaction Type", "SGL Ind.", "Pymt method", "Payment Ref.",
+                    "Dunn. Block", "Business place"
                 ];
                 
                 // Create an example row with sample data
-                const exampleRow = {
-                    "Company Code": "COMP001",
-                    "Document Currency Amount": 1000,
-                    "Local Currency Amount": 950,
-                    "G/L Account": "4000",
-                    "Vendor Position": "V001",
-                    "Customer Position": "C001",
-                    "Cost Center": "CC100",
-                    "Order Number": "ORD123",
-                    "Assignment Number": "ASG789",
-                    "Item Text": "Sample item description",
-                    "Profit Center": "PC001",
-                    "Value Date": "2025-01-01",
-                    "Business Area": "BA01",
-                    "Quantity": 10,
-                    "Unit": "EA",
-                    "Purchase Order": "PO12345",
-                    "PO Item Adjustment": "001",
-                    "Trading Partner": "TP100",
-                    "St. Central Bank Ind.": "X",
-                    "Supplementary Country": "US",
-                    "Tax Code": "TX01",
-                    "Tax Percentage": 5,
-                    "Plant": "PL01",
-                    "Withholding Tax Code": "WTX",
-                    "Discount Base": 950,
-                    "Days 1": 30,
-                    "Discount 1": 2,
-                    "Baseline Date": "2025-01-01",
-                    "Payment Terms": "NET 30",
-                    "Payment Block": "PB001",
-                    "Transaction Type": "TRX",
-                    "SGL Indicator": "Y",
-                    "Payment Method": "EFT",
-                    "Payment Reference": "PMT123",
-                    "Dunning Block": "DB001",
-                    "Business Place": "BP001"
-                };
+                const exampleRow = {};
+                headers.forEach(header => { exampleRow[header] = ""; }); // Initialize empty values
                 
                 // Create a worksheet
                 const ws = XLSX.utils.json_to_sheet([exampleRow], { header: headers });
                 
                 // Set column widths
-                const wscols = headers.map(() => ({ wch: 15 })); // Set width for all columns
+                const wscols = headers.map(() => ({ wch: 18 })); // Set width for all columns
                 ws['!cols'] = wscols;
                 
                 // Create a workbook
@@ -993,10 +936,12 @@ sap.ui.define([
                 }, 0);
                 
                 MessageToast.show("Template downloaded successfully.");
+                this._addMessage("Success", "Template Downloaded", "Template downloaded successfully.");
                 
             } catch (error) {
                 console.error("Error creating template:", error);
                 MessageBox.error("Error creating template. Details: " + error.message);
+                this._addMessage("Error", "Template Error", "Error creating template. Details: " + error.message);
             }
         },
         //Download Template button logic ends
@@ -1048,58 +993,61 @@ sap.ui.define([
 
                     if (!excelData || excelData.length === 0) {
                         MessageToast.show("No data found in the selected Excel sheet.");
+                        that._addMessage("Warning", "Upload Info", "No data found in the selected Excel sheet.");
                         return;
                     }
 
-                    // Updated column mapping to match the financial data structure
+                    // Log headers for reference during debugging
+                    console.log("Excel Headers Found:", Object.keys(excelData[0] || {}));
+
+                    // COLUMN MAPPING: Maps EXCEL header (key) -> Standardized MODEL property (value)
+                    // Ensure the LEFT side matches your Excel file headers EXACTLY
+                    // Ensure the RIGHT side matches the standardized list EXACTLY
                     const columnMapping = {
-                        "Company Code": "Comp.Code",
-                        "Document Currency Amount": "Amount Doc.Curr.",
-                        "Local Currency Amount": "Amount Loc.Curr.",
-                        "G/L Account": "G/L account",
-                        "Vendor Position": "Vendor pos.",
-                        "Customer Position": "Customer pos.",
-                        "Cost Center": "Cost center",
-                        "Order Number": "Order Number",
-                        "Assignment Number": "Assignment number",
-                        "Item Text": "Item Text",
-                        "Profit Center": "Profit Center",
-                        "Value Date": "Value Date",
-                        "Business Area": "Business area",
-                        "Quantity": "Quantity",
-                        "Unit": "Unit",
-                        "Purchase Order": "Puchase Order",
-                        "PO Item Adjustment": "PO Item Adjust",
-                        "Trading Partner": "Trad. Partn.",
-                        "St. Central Bank Ind.": "St. Centr. bk ind.",
-                        "Supplementary Country": "Suppl. Ctry",
-                        "Tax Code": "Tax code",
-                        "Tax Percentage": "Tax percent.",
-                        "Plant": "Plant",
-                        "Withholding Tax Code": "Withh.TxCd",
-                        "Discount Base": "Disc.base",
-                        "Days 1": "Days 1",
-                        "Discount 1": "Disc.1",
-                        "Baseline Date": "Baseline Date",
-                        "Payment Terms": "Payt Terms",
-                        "Payment Block": "PaymBlk",
-                        "Transaction Type": "Transaction Type",
-                        "SGL Indicator": "SGL Ind.",
-                        "Payment Method": "Pymt method",
-                        "Payment Reference": "Payment Ref.",
-                        "Dunning Block": "Dunn. Block",
-                        "Business Place": "Business place"
+                        // --- These KEYS must match your Excel Headers ---   // --- These VALUES must match your Standardized List ---
+                        "Comp.Code":                "Comp.Code",
+                        "Amount Doc.Curr.":         "Amount Doc.Curr.",
+                        "Amount Loc.Curr.":         "Amount Loc.Curr.",
+                        "GL account":              "GL account", // Standardized model key
+                        "Vendor pos.":              "Vendor pos.",
+                        "Customer pos.":            "Customer pos.",
+                        "Cost center":              "Cost center",
+                        "Order Number":             "Order Number",
+                        "Assignment number":        "Assignment number",
+                        "Item Text":                "Item Text",
+                        "Profit Center":            "Profit Center",
+                        "Value Date":               "Value Date",
+                        "Business area":            "Business area",
+                        "Quantity":                 "Quantity",
+                        "Unit":                     "Unit",
+                        "Puchase Order":            "Puchase Order",
+                        "PO Item Adjust":           "PO Item Adjust",
+                        "Trad. Partn.":             "Trad. Partn.",
+                        "St. Centr. bk ind.":       "St. Centr. bk ind.",
+                        "Suppl. Ctry":              "Suppl. Ctry",
+                        "Tax code":                 "Tax code",
+                        "Tax percent.":             "Tax percent.",
+                        "Plant":                    "Plant",
+                        "Withh.TxCd":               "Withh.TxCd",
+                        "Disc.base":                "Disc.base",
+                        "Days 1":                   "Days 1",
+                        "Disc.1":                   "Disc.1",
+                        "Baseline Date":            "Baseline Date",
+                        "Payt Terms":               "Payt Terms",
+                        "PaymBlk":                  "PaymBlk",
+                        "Transaction Type":         "Transaction Type",
+                        "SGL Ind.":                 "SGL Ind.",
+                        "Pymt method":              "Pymt method",
+                        "Payment Ref.":             "Payment Ref.",
+                        "Dunn. Block":              "Dunn. Block",
+                        "Business place":           "Business place"
+                        //-------------------------------------------------------
                     };
 
-                    // Define numeric fields for proper type conversion
+                    // Define numeric fields using Standardized Keys
                     const numericFields = [
-                        "Amount Doc.Curr.", 
-                        "Amount Loc.Curr.", 
-                        "Quantity", 
-                        "Tax percent.", 
-                        "Disc.base", 
-                        "Days 1", 
-                        "Disc.1"
+                        "Amount Doc.Curr.", "Amount Loc.Curr.", "Quantity",
+                        "Tax percent.", "Disc.base", "Days 1", "Disc.1"
                     ];
 
                     const mappedData = excelData.map(row => {
@@ -1114,6 +1062,10 @@ sap.ui.define([
                                 mappedRow[jsonKey] = ""; // Default string fields to empty string
                             }
                         });
+
+                        // ---> ADD THIS LINE to ensure status is always present <---
+                        mappedRow["validationStatus"] = "pending";
+                        // ----------------------------------------------------------
                         
                         // Fill in values from Excel where they exist
                         Object.entries(columnMapping).forEach(([excelKey, jsonKey]) => {
@@ -1139,6 +1091,7 @@ sap.ui.define([
                         // Update the data in the model
                         oResultModel.setProperty("/aResults", mappedData);
                         MessageToast.show("File uploaded successfully! " + mappedData.length + " items loaded.");
+                        that._addMessage("Success", "Upload Successful", `Loaded ${mappedData.length} items.`);
 
                         // Rebind the SmartTable to ensure data is displayed properly
                         var oSmartTable = that.byId("smartAccountTable");
@@ -1537,7 +1490,7 @@ sap.ui.define([
                 MessageToast.show("No items to post. Please add line items.");
             }
         },
-
+/*
         onNotificationPress: function (oEvent) {
             var oModel = this.getView().getModel();
             var aNotifications = oModel.getProperty("/notifications");
@@ -1546,6 +1499,6 @@ sap.ui.define([
                 MessageToast.show("No Notifications");
             }
         }
-
+*/
     });
 });

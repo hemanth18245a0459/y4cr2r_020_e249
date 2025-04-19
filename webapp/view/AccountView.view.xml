@@ -81,7 +81,7 @@
 		</Panel>
 
 		<VBox id="accountFormContainer">
-			<smartTable:SmartTable id="smartAccountTable" entitySet="aResults" tableBindingPath="/aResults" enableAutoBinding="true" tableType="Table" enableExport="true" useVariantManagement="true" useTablePersonalisation="true" header="Items" showRowCount="true" persistencyKey="SmartTableAnalytical_PersistencyKey" class="sapUiSmallMarginTop" initiallyVisibleFields="Comp.Code,Amount Doc.Curr.,G/L account,Item Text" ignoredFields="">
+			<smartTable:SmartTable id="smartAccountTable" entitySet="aResults" tableBindingPath="/aResults" enableAutoBinding="true" tableType="Table" enableExport="true" useVariantManagement="true" useTablePersonalisation="true" header="Items" showRowCount="true" persistencyKey="SmartTableAnalytical_PersistencyKey" class="sapUiSmallMarginTop" initiallyVisibleFields="Comp.Code,Amount Doc.Curr.,GL Account,Item Text" ignoredFields="">
 				<smartTable:customToolbar>
 					<OverflowToolbar id="tableToolbar">
 						<ToolbarSpacer />
@@ -107,86 +107,74 @@
 							</t:customData>
 							<Label id="lblStatus" text="Status"/>
 							<t:template>
-								<core:Icon id="statusIcon"
-									src="{= ${validationStatus} === 'pending' ? 'sap-icon://status-inactive' : 'sap-icon://rhombus-milestone-2' }"
-									size="1.25rem" 
-									color="{= ${validationStatus} === 'valid' ? '#3cb371' : '#bb0000' }"
-									tooltip="{= ${validationStatus} === 'valid' ? 'Valid' : ${validationStatus} === 'invalid' ? 'Invalid' : 'Pending validation' }">
+								<core:Icon id="statusIcon" src="{= ${validationStatus} === 'pending' ? 'sap-icon://status-inactive' : 'sap-icon://rhombus-milestone-2' }" size="1rem" color="{= ${validationStatus} === 'valid' ? '#3cb371' : '#bb0000' }" tooltip="{= ${validationStatus} === 'valid' ? 'Valid' : ${validationStatus} === 'invalid' ? 'Invalid' : 'Pending validation' }">
 								</core:Icon>
 							</t:template>
 						</t:Column>
-						
-						<!-- Company Code Column -->
+
 						<t:Column id="colCompCode" sortProperty="Comp.Code" filterProperty="Comp.Code" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Comp.Code", "leadingProperty": "Comp.Code", "sortProperty": "Comp.Code", "filterProperty": "Comp.Code"}'/>
 							</t:customData>
-							<Label id="lblCompanyCodeCol" text="Company Code" required="true"/>
+							<Label id="lblCompanyCodeCol" text="Comp.Code" required="true"/>
 							<t:template>
 								<Input id="inputCompCode" value="{Comp.Code}" showValueHelp="true" valueHelpRequest="onCompanyCodeCellValueHelpRequest" change="onCompanyCodeCellChange" required="true" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colAmountDocCurr" sortProperty="Amount Doc.Curr." filterProperty="Amount Doc.Curr." width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Amount Doc.Curr.", "leadingProperty": "Amount Doc.Curr.", "sortProperty": "Amount Doc.Curr.", "filterProperty": "Amount Doc.Curr."}'/>
 							</t:customData>
-							<Label id="lblDocAmount" text="Doc. Amount" required="true"/>
+							<Label id="lblDocAmount" text="Amount Doc.Curr." required="true"/>
 							<t:template>
-								<Input id="inputAmountDocCurr" value="{Amount Doc.Curr.}" change="onAmountDocCurrChange" />
+								<Input id="inputAmountDocCurr" value="{Amount Doc.Curr.}" change="onAmountDocCurrChange" required="true" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colAmountLocCurr" sortProperty="Amount Loc.Curr." filterProperty="Amount Loc.Curr." width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Amount Loc.Curr.", "leadingProperty": "Amount Loc.Curr.", "sortProperty": "Amount Loc.Curr.", "filterProperty": "Amount Loc.Curr."}'/>
 							</t:customData>
-							<Label id="lblLocalAmount" text="Local Amount"/>
+							<Label id="lblLocalAmount" text="Amount Loc.Curr."/>
 							<t:template>
 								<Input id="inputAmountLocCurr" value="{Amount Loc.Curr.}" change="onAmountLocCurrChange" />
 							</t:template>
 						</t:Column>
-
-						<t:Column id="colGLAccount" sortProperty="G/L account" filterProperty="G/L account" width="8rem">
+						<t:Column id="colGLAccount" sortProperty="GL account" filterProperty="GL account" width="8rem">
 							<t:customData>
-								<core:CustomData key="p13nData" value='\{"columnKey": "G/L account", "leadingProperty": "G/L account", "sortProperty": "G/L account", "filterProperty": "G/L account"}'/>
+								<core:CustomData key="p13nData" value='\{"columnKey": "GL account", "leadingProperty": "GL account", "sortProperty": "GL account", "filterProperty": "GL account"}'/>
 							</t:customData>
-							<Label id="lblGLAccount" text="G/L Account"/>
+							<Label id="lblGLAccount" text="GL account"/>
 							<t:template>
-								<Input id="inputGLAccount" value="{G/L account}" showValueHelp="true" valueHelpRequest="onGLAccountValueHelpRequest" change="onGLAccountChange" />
+								<Input id="inputGLAccount" value="{GL account}" showValueHelp="true" valueHelpRequest="onGLAccountValueHelpRequest" change="onGLAccountChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colVendorPos" sortProperty="Vendor pos." filterProperty="Vendor pos." width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Vendor pos.", "leadingProperty": "Vendor pos.", "sortProperty": "Vendor pos.", "filterProperty": "Vendor pos."}'/>
 							</t:customData>
-							<Label id="lblVendorPos" text="Vendor Pos."/>
+							<Label id="lblVendorPos" text="Vendor pos."/>
 							<t:template>
 								<Input id="inputVendorPos" value="{Vendor pos.}" showValueHelp="true" valueHelpRequest="onVendorPosValueHelpRequest" change="onVendorPosChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colCustomerPos" sortProperty="Customer pos." filterProperty="Customer pos." width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Customer pos.", "leadingProperty": "Customer pos.", "sortProperty": "Customer pos.", "filterProperty": "Customer pos."}'/>
 							</t:customData>
-							<Label id="lblCustomerPos" text="Customer Pos."/>
+							<Label id="lblCustomerPos" text="Customer pos."/>
 							<t:template>
 								<Input id="inputCustomerPos" value="{Customer pos.}" showValueHelp="true" valueHelpRequest="onCustomerPosValueHelpRequest" change="onCustomerPosChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colCostCenter" sortProperty="Cost center" filterProperty="Cost center" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Cost center", "leadingProperty": "Cost center", "sortProperty": "Cost center", "filterProperty": "Cost center"}'/>
 							</t:customData>
-							<Label id="lblCostCenter" text="Cost Center"/>
+							<Label id="lblCostCenter" text="Cost center"/>
 							<t:template>
 								<Input id="inputCostCenter" value="{Cost center}" showValueHelp="true" valueHelpRequest="onCostCenterValueHelpRequest" change="onCostCenterChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colOrderNumber" sortProperty="Order Number" filterProperty="Order Number" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Order Number", "leadingProperty": "Order Number", "sortProperty": "Order Number", "filterProperty": "Order Number"}'/>
@@ -196,17 +184,15 @@
 								<Input id="inputOrderNumber" value="{Order Number}" change="onOrderNumberChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colAssignmentNumber" sortProperty="Assignment number" filterProperty="Assignment number" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Assignment number", "leadingProperty": "Assignment number", "sortProperty": "Assignment number", "filterProperty": "Assignment number"}'/>
 							</t:customData>
-							<Label id="lblAssignment" text="Assignment"/>
+							<Label id="lblAssignment" text="Assignment number"/>
 							<t:template>
 								<Input id="inputAssignmentNumber" value="{Assignment number}" change="onAssignmentNumberChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colItemText" sortProperty="Item Text" filterProperty="Item Text" width="12rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Item Text", "leadingProperty": "Item Text", "sortProperty": "Item Text", "filterProperty": "Item Text"}'/>
@@ -216,7 +202,6 @@
 								<Input id="inputItemText" value="{Item Text}" change="onItemTextChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colProfitCenter" sortProperty="Profit Center" filterProperty="Profit Center" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Profit Center", "leadingProperty": "Profit Center", "sortProperty": "Profit Center", "filterProperty": "Profit Center"}'/>
@@ -226,27 +211,24 @@
 								<Input id="inputProfitCenter" value="{Profit Center}" showValueHelp="true" valueHelpRequest="onProfitCenterValueHelpRequest" change="onProfitCenterChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colValueDate" sortProperty="Value Date" filterProperty="Value Date" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Value Date", "leadingProperty": "Value Date", "sortProperty": "Value Date", "filterProperty": "Value Date"}'/>
 							</t:customData>
 							<Label id="lblValueDate" text="Value Date"/>
 							<t:template>
-								<DatePicker id="inputValueDate" value="{Value Date}" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onValueDateChange" />
+								<DatePicker id="inputValueDate" value="{Value Date}" displayFormat="dd.MM.yyyy" valueFormat="yyyy-MM-dd" change="onValueDateChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colBusinessArea" sortProperty="Business area" filterProperty="Business area" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Business area", "leadingProperty": "Business area", "sortProperty": "Business area", "filterProperty": "Business area"}'/>
 							</t:customData>
-							<Label id="lblBusinessArea" text="Business Area"/>
+							<Label id="lblBusinessArea" text="Business area"/>
 							<t:template>
 								<Input id="inputBusinessArea" value="{Business area}" showValueHelp="true" valueHelpRequest="onBusinessAreaValueHelpRequest" change="onBusinessAreaChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colQuantity" sortProperty="Quantity" filterProperty="Quantity" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Quantity", "leadingProperty": "Quantity", "sortProperty": "Quantity", "filterProperty": "Quantity"}'/>
@@ -256,7 +238,6 @@
 								<Input id="inputQuantity" value="{Quantity}" change="onQuantityChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colUnit" sortProperty="Unit" filterProperty="Unit" width="6rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Unit", "leadingProperty": "Unit", "sortProperty": "Unit", "filterProperty": "Unit"}'/>
@@ -266,17 +247,15 @@
 								<Input id="inputUnit" value="{Unit}" showValueHelp="true" valueHelpRequest="onUnitValueHelpRequest" change="onUnitChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPurchaseOrder" sortProperty="Puchase Order" filterProperty="Puchase Order" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Puchase Order", "leadingProperty": "Puchase Order", "sortProperty": "Puchase Order", "filterProperty": "Puchase Order"}'/>
 							</t:customData>
-							<Label id="lblPurchaseOrder" text="Purchase Order"/>
+							<Label id="lblPurchaseOrder" text="Puchase Order"/>
 							<t:template>
 								<Input id="inputPurchaseOrder" value="{Puchase Order}" showValueHelp="true" valueHelpRequest="onPurchaseOrderValueHelpRequest" change="onPurchaseOrderChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPOItemAdjust" sortProperty="PO Item Adjust" filterProperty="PO Item Adjust" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "PO Item Adjust", "leadingProperty": "PO Item Adjust", "sortProperty": "PO Item Adjust", "filterProperty": "PO Item Adjust"}'/>
@@ -286,57 +265,51 @@
 								<Input id="inputPOItemAdjust" value="{PO Item Adjust}" change="onPOItemAdjustChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colTradingPartner" sortProperty="Trad. Partn." filterProperty="Trad. Partn." width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Trad. Partn.", "leadingProperty": "Trad. Partn.", "sortProperty": "Trad. Partn.", "filterProperty": "Trad. Partn."}'/>
 							</t:customData>
-							<Label id="lblTradingPartner" text="Trading Partner"/>
+							<Label id="lblTradingPartner" text="Trad. Partn."/>
 							<t:template>
 								<Input id="inputTradingPartner" value="{Trad. Partn.}" showValueHelp="true" valueHelpRequest="onTradingPartnerValueHelpRequest" change="onTradingPartnerChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colStCentralBankInd" sortProperty="St. Centr. bk ind." filterProperty="St. Centr. bk ind." width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "St. Centr. bk ind.", "leadingProperty": "St. Centr. bk ind.", "sortProperty": "St. Centr. bk ind.", "filterProperty": "St. Centr. bk ind."}'/>
 							</t:customData>
-							<Label id="lblStCentralBankInd" text="St. Central Bank Ind."/>
+							<Label id="lblStCentralBankInd" text="St. Centr. bk ind."/>
 							<t:template>
 								<Input id="inputStCentrBkInd" value="{St. Centr. bk ind.}" change="onStCentrBkIndChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colSupplCtry" sortProperty="Suppl. Ctry" filterProperty="Suppl. Ctry" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Suppl. Ctry", "leadingProperty": "Suppl. Ctry", "sortProperty": "Suppl. Ctry", "filterProperty": "Suppl. Ctry"}'/>
 							</t:customData>
-							<Label id="lblSupplCountry" text="Suppl. Country"/>
+							<Label id="lblSupplCountry" text="Suppl. Ctry"/>
 							<t:template>
 								<Input id="inputSupplCtry" value="{Suppl. Ctry}" showValueHelp="true" valueHelpRequest="onSupplCtryValueHelpRequest" change="onSupplCtryChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colTaxCode" sortProperty="Tax code" filterProperty="Tax code" width="7rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Tax code", "leadingProperty": "Tax code", "sortProperty": "Tax code", "filterProperty": "Tax code"}'/>
 							</t:customData>
-							<Label id="lblTaxCode" text="Tax Code"/>
+							<Label id="lblTaxCode" text="Tax code"/>
 							<t:template>
 								<Input id="inputTaxCode" value="{Tax code}" showValueHelp="true" valueHelpRequest="onTaxCodeValueHelpRequest" change="onTaxCodeChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colTaxPercent" sortProperty="Tax percent." filterProperty="Tax percent." width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Tax percent.", "leadingProperty": "Tax percent.", "sortProperty": "Tax percent.", "filterProperty": "Tax percent."}'/>
 							</t:customData>
-							<Label id="lblTaxPercentage" text="Tax Percentage"/>
+							<Label id="lblTaxPercentage" text="Tax percent."/>
 							<t:template>
 								<Input id="inputTaxPercent" value="{Tax percent.}" change="onTaxPercentChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPlant" sortProperty="Plant" filterProperty="Plant" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Plant", "leadingProperty": "Plant", "sortProperty": "Plant", "filterProperty": "Plant"}'/>
@@ -346,27 +319,24 @@
 								<Input id="inputPlant" value="{Plant}" showValueHelp="true" valueHelpRequest="onPlantValueHelpRequest" change="onPlantChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colWithhTxCd" sortProperty="Withh.TxCd" filterProperty="Withh.TxCd" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Withh.TxCd", "leadingProperty": "Withh.TxCd", "sortProperty": "Withh.TxCd", "filterProperty": "Withh.TxCd"}'/>
 							</t:customData>
-							<Label id="lblWithholdingTaxCode" text="Withholding Tax Code"/>
+							<Label id="lblWithholdingTaxCode" text="Withh.TxCd"/>
 							<t:template>
 								<Input id="inputWithhTxCd" value="{Withh.TxCd}" showValueHelp="true" valueHelpRequest="onWithhTxCdValueHelpRequest" change="onWithhTxCdChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colDiscBase" sortProperty="Disc.base" filterProperty="Disc.base" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Disc.base", "leadingProperty": "Disc.base", "sortProperty": "Disc.base", "filterProperty": "Disc.base"}'/>
 							</t:customData>
-							<Label id="lblDiscountBase" text="Discount Base"/>
+							<Label id="lblDiscountBase" text="Disc.base"/>
 							<t:template>
 								<Input id="inputDiscBase" value="{Disc.base}" change="onDiscBaseChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colDays1" sortProperty="Days 1" filterProperty="Days 1" width="6rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Days 1", "leadingProperty": "Days 1", "sortProperty": "Days 1", "filterProperty": "Days 1"}'/>
@@ -376,47 +346,42 @@
 								<Input id="inputDays1" value="{Days 1}" change="onDays1Change" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colDisc1" sortProperty="Disc.1" filterProperty="Disc.1" width="6rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Disc.1", "leadingProperty": "Disc.1", "sortProperty": "Disc.1", "filterProperty": "Disc.1"}'/>
 							</t:customData>
-							<Label id="lblDiscount1" text="Discount 1"/>
+							<Label id="lblDiscount1" text="Disc.1"/>
 							<t:template>
 								<Input id="inputDisc1" value="{Disc.1}" change="onDisc1Change" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colBaselineDate" sortProperty="Baseline Date" filterProperty="Baseline Date" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Baseline Date", "leadingProperty": "Baseline Date", "sortProperty": "Baseline Date", "filterProperty": "Baseline Date"}'/>
 							</t:customData>
 							<Label id="lblBaselineDate" text="Baseline Date"/>
 							<t:template>
-								<DatePicker id="inputBaselineDate" value="{Baseline Date}" displayFormat="dd.MM.yyyy" valueFormat="dd.MM.yyyy" change="onBaselineDateChange" />
+								<DatePicker id="inputBaselineDate" value="{Baseline Date}" displayFormat="dd.MM.yyyy" valueFormat="yyyy-MM-dd" change="onBaselineDateChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPaytTerms" sortProperty="Payt Terms" filterProperty="Payt Terms" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Payt Terms", "leadingProperty": "Payt Terms", "sortProperty": "Payt Terms", "filterProperty": "Payt Terms"}'/>
 							</t:customData>
-							<Label id="lblPaymentTerms" text="Payment Terms"/>
+							<Label id="lblPaymentTerms" text="Payt Terms"/>
 							<t:template>
 								<Input id="inputPaytTerms" value="{Payt Terms}" showValueHelp="true" valueHelpRequest="onPaytTermsValueHelpRequest" change="onPaytTermsChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPaymBlk" sortProperty="PaymBlk" filterProperty="PaymBlk" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "PaymBlk", "leadingProperty": "PaymBlk", "sortProperty": "PaymBlk", "filterProperty": "PaymBlk"}'/>
 							</t:customData>
-							<Label id="lblPaymentBlock" text="Payment Block"/>
+							<Label id="lblPaymentBlock" text="PaymBlk"/>
 							<t:template>
 								<Input id="inputPaymBlk" value="{PaymBlk}" showValueHelp="true" valueHelpRequest="onPaymBlkValueHelpRequest" change="onPaymBlkChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colTransactionType" sortProperty="Transaction Type" filterProperty="Transaction Type" width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Transaction Type", "leadingProperty": "Transaction Type", "sortProperty": "Transaction Type", "filterProperty": "Transaction Type"}'/>
@@ -426,52 +391,47 @@
 								<Input id="inputTransactionType" value="{Transaction Type}" showValueHelp="true" valueHelpRequest="onTransactionTypeValueHelpRequest" change="onTransactionTypeChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colSGLInd" sortProperty="SGL Ind." filterProperty="SGL Ind." width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "SGL Ind.", "leadingProperty": "SGL Ind.", "sortProperty": "SGL Ind.", "filterProperty": "SGL Ind."}'/>
 							</t:customData>
-							<Label id="lblSGLIndicator" text="SGL Indicator"/>
+							<Label id="lblSGLIndicator" text="SGL Ind."/>
 							<t:template>
 								<Input id="inputSGLInd" value="{SGL Ind.}" showValueHelp="true" valueHelpRequest="onSGLIndValueHelpRequest" change="onSGLIndChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPymtMethod" sortProperty="Pymt method" filterProperty="Pymt method" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Pymt method", "leadingProperty": "Pymt method", "sortProperty": "Pymt method", "filterProperty": "Pymt method"}'/>
 							</t:customData>
-							<Label id="lblPaymentMethod" text="Payment Method"/>
+							<Label id="lblPaymentMethod" text="Pymt method"/>
 							<t:template>
 								<Input id="inputPymtMethod" value="{Pymt method}" showValueHelp="true" valueHelpRequest="onSGLIndValueHelpRequest" change="onSGLIndChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colPaymentRef" sortProperty="Payment Ref." filterProperty="Payment Ref." width="10rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Payment Ref.", "leadingProperty": "Payment Ref.", "sortProperty": "Payment Ref.", "filterProperty": "Payment Ref."}'/>
 							</t:customData>
-							<Label id="lblPaymentReference" text="Payment Reference"/>
+							<Label id="lblPaymentReference" text="Payment Ref."/>
 							<t:template>
 								<Input id="inputPymtReference" value="{Payment Ref.}" showValueHelp="true" valueHelpRequest="onSGLIndValueHelpRequest" change="onSGLIndChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colDunnBlock" sortProperty="Dunn. Block" filterProperty="Dunn. Block" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Dunn. Block", "leadingProperty": "Dunn. Block", "sortProperty": "Dunn. Block", "filterProperty": "Dunn. Block"}'/>
 							</t:customData>
-							<Label id="lblDunningBlock" text="Dunning Block"/>
+							<Label id="lblDunningBlock" text="Dunn. Block"/>
 							<t:template>
 								<Input id="inputDunnBlock" value="{Dunn. Block}" showValueHelp="true" valueHelpRequest="onSGLIndValueHelpRequest" change="onSGLIndChange" />
 							</t:template>
 						</t:Column>
-
 						<t:Column id="colBusinessPlace" sortProperty="Business place" filterProperty="Business place" width="8rem">
 							<t:customData>
 								<core:CustomData key="p13nData" value='\{"columnKey": "Business place", "leadingProperty": "Business place", "sortProperty": "Business place", "filterProperty": "Business place"}'/>
 							</t:customData>
-							<Label id="lblBusinessPlace" text="Business Place"/>
+							<Label id="lblBusinessPlace" text="Business place"/>
 							<t:template>
 								<Input id="inputBusinessPlace" value="{Business place}" showValueHelp="true" valueHelpRequest="onSGLIndValueHelpRequest" change="onSGLIndChange" />
 							</t:template>
@@ -484,9 +444,7 @@
 		<!-- Footer Section -->
 		<footer>
 			<OverflowToolbar id="otbFooter">
-				<Button id="messagePopoverBtn"
-					icon="{path: 'messageModel>/', formatter: '.buttonIconFormatter'}"     type="{path: 'messageModel>/', formatter: '.buttonTypeFormatter'}"     text= "{path: 'messageModel>/', formatter: '.totalMessageCountFormatter'}" press=".handleMessagePopoverPress"
-					ariaHasPopup="Dialog">
+				<Button id="messagePopoverBtn" icon="{path: 'messageModel>/', formatter: '.buttonIconFormatter'}" type="{path: 'messageModel>/', formatter: '.buttonTypeFormatter'}" text= "{path: 'messageModel>/', formatter: '.totalMessageCountFormatter'}" press=".handleMessagePopoverPress" ariaHasPopup="Dialog">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>
