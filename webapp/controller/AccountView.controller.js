@@ -805,6 +805,7 @@ sap.ui.define([
             }
         },
 
+        
         // Updated Add button logic
         onAdd: function() {
             // Get form field values directly using their IDs
@@ -892,7 +893,64 @@ sap.ui.define([
             this._addMessage("Information", "New Row Added", "New row has been added to the table");
         },
         // Add button logic ends
+        
+        
+        /*// --- Add Row (Clears messages ONLY on full success) ---
+        onAdd: function() {
+            var bValid = true;
+            var aMandatoryControls = [
+                this.byId("inputCompanyCode"), this.byId("inputDocumentDate"),
+                this.byId("inputPostingDate"), this.byId("inputPostingPeriod"),
+                this.byId("inputFiscalYear"), this.byId("inputCurrency")
+            ];
+            var aMissingFields = [];
 
+            aMandatoryControls.forEach(function(oControl) {
+                if (!oControl.getValue()) {
+                    bValid = false;
+                    var oLabel = this.getView().byId(oControl.getAriaLabelledBy()[0]);
+                    var sFieldName = oLabel ? oLabel.getText() : oControl.getId().replace("input", "");
+                    aMissingFields.push(sFieldName);
+                    oControl.setValueState("Error");
+                } else {
+                    oControl.setValueState("None");
+                }
+            }.bind(this));
+
+            if (!bValid) {
+                // Add error message, DO NOT clear others
+                this._addMessage("Error", "Input Required", "Please fill mandatory fields: " + aMissingFields.join(", "));
+                MessageBox.error("Please fill all mandatory fields: " + aMissingFields.join(", ")); // Keep immediate feedback
+                return;
+            }
+
+            // Validation passed - NOW clear previous messages
+            this._clearAllMessages(); // <<< CLEAR ALL ON SUCCESSFUL ADD
+
+            // Create new row object using standardized keys
+            var oNewRow = {
+                "Comp.Code": this.byId("inputCompanyCode").getValue(),
+                "Amount Doc.Curr.": "", "Amount Loc.Curr.": "", "GL account": "", // <<< Use "GL account"
+                "Vendor pos.": "", "Customer pos.": "", "Cost center": "", "Order Number": "",
+                "Assignment number": "", "Item Text": "", "Profit Center": "", "Value Date": "",
+                "Business area": "", "Quantity": "", "Unit": "", "Puchase Order": "",
+                "PO Item Adjust": "", "Trad. Partn.": "", "St. Centr. bk ind.": "", "Suppl. Ctry": "",
+                "Tax code": "", "Tax percent.": "", "Plant": "", "Withh.TxCd": "", "Disc.base": "",
+                "Days 1": "", "Disc.1": "", "Baseline Date": "", "Payt Terms": "", "PaymBlk": "",
+                "Transaction Type": "", "SGL Ind.": "", "Pymt method": "", "Payment Ref.": "",
+                "Dunn. Block": "", "Business place": "",
+                "validationStatus": "pending"
+            };
+            var oResultModel = this.getView().getModel("oResultModel");
+            var aResults = oResultModel.getProperty("/aResults");
+            aResults.unshift(oNewRow);
+            oResultModel.setProperty("/aResults", aResults);
+
+            // Add a *new* persistent success/info message
+            this._addMessage("Information", "New Row Added", "New row has been added to the table");
+        },
+        // ------------------------------------------------------
+*/
         // Updated Download Template button logic starts
         onDownloadTemplate: function() {
             try {
